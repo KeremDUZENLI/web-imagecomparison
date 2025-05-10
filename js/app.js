@@ -1,9 +1,3 @@
-const images = [
-  '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg',
-];
-const ratings = {};
-const recentDeltas = [];
-
 const MAX_MOVES = 10;
 const CONVERGENCE_THRESHOLD = 0.5;
 const K = 32;
@@ -12,20 +6,38 @@ const imgA = document.getElementById('imgA');
 const imgB = document.getElementById('imgB');
 const progress = document.getElementById('progress');
 const resultsDiv = document.getElementById('results');
+const namePrompt = document.getElementById('namePrompt');
 
-let userName = null;
+const ratings = {};
+const recentDeltas = [];
+
+let images = [];
 let currentPair = [];
+let userName = null;
 let matchesDone = 0;
 images.forEach(f => ratings[f] = 1500);
 
-const namePrompt = document.getElementById('namePrompt');
-window.addEventListener('load', () => {
-  userName = prompt('Please enter your name:');
-  if (!userName) {
-    alert('Name is required to proceed');
-    window.location.reload();
-  } else {
-    showPair();
+async function loadImages() {
+  const response = await fetch('images.json');
+  if (!response.ok) throw new Error('Failed to load image list');
+  return await response.json();
+}
+
+window.addEventListener('load', async () => {
+  try {
+    images = await loadImages();
+    images.forEach(f => ratings[f] = 1500);
+
+    userName = prompt('Please enter your name:');
+    if (!userName) {
+      alert('Name is required to proceed');
+      window.location.reload();
+    } else {
+      showPair();
+    }
+  } catch (error) {
+    alert('Failed to load images.');
+    console.error(error);
   }
 });
 
@@ -92,7 +104,6 @@ const buttonChooseA = document.getElementById('buttonChooseA');
 const buttonChooseB = document.getElementById('buttonChooseB');
 buttonChooseA.addEventListener('click', () => {updateElo(currentPair[0], currentPair[1]); afterEachMatch()});
 buttonChooseB.addEventListener('click', () => {updateElo(currentPair[1], currentPair[0]); afterEachMatch()});
-showPair()
 
 // function sendResult(winner) {
 //   const payload = {
