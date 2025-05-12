@@ -13,6 +13,6 @@ func NewProjectService(repo *repository.ProjectRepository) *ProjectService {
 	return &ProjectService{Repo: repo}
 }
 
-func (s *ProjectService) CreateVote(v *model.ProjectModel) error {
+func (s *ProjectService) CreateEntry(v *model.ProjectModel) error {
 	return s.Repo.InsertVote(v)
 }

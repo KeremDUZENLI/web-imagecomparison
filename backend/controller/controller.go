@@ -28,7 +28,7 @@ func (vc *ProjectController) HandleEntry(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if err := vc.Service.CreateVote(&v); err != nil {
+	if err := vc.Service.CreateEntry(&v); err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
