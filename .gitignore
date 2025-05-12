@@ -1,21 +1,36 @@
-# Backend deps & secrets
-/backend/node_modules/
+# ========================
+# Environment & Secrets
+# ========================
 /backend/.env
 
-# Logs
+# ========================
+# Dependency Folders
+# ========================
+/backend/node_modules/
+
+# ========================
+# Build & Logs
+# ========================
 *.log
 
-# OS cruft
+# ========================
+# OS & Editor Files
+# ========================
+# macOS
 .DS_Store
+# Windows
 Thumbs.db
-
-# Editor configs
+# VSCode & JetBrains
 .vscode/
 .idea/
 
-# Python cache (helper script)
+# ========================
+# Python Cache (helper/)
+# ========================
 /helper/__pycache__/
 /helper/*.py[cod]
 
-# Docker override (if you ever create it)
+# ========================
+# Docker Overrides
+# ========================
 docker-compose.override.yml
