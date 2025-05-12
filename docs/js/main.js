@@ -38,10 +38,11 @@ async function init() {
 
 async function logVote(voteData) {
   try {
-    await fetch('http://localhost:3000/api/votes', {
+    console.log('Sending voteData:', voteData);
+    await fetch('/api/votes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(voteData)
+      body:   JSON.stringify(voteData)
     });
   } catch (err) {
     console.error('Error sending vote:', err);
