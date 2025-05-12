@@ -14,5 +14,5 @@ func NewProjectService(repo *repository.ProjectRepository) *ProjectService {
 }
 
 func (s *ProjectService) CreateEntry(v *model.ProjectModel) error {
-	return s.Repo.InsertVote(v)
+	return s.Repo.Insert(v)
 }

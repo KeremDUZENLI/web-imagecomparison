@@ -13,8 +13,7 @@ import (
 
 func main() {
 	env.Load()
-
-	db, err := database.DatabaseDB()
+	db, err := database.ConnectDB()
 	if err != nil {
 		log.Fatal(err)
 	}

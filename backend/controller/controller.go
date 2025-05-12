@@ -12,27 +12,36 @@ type ProjectController struct {
 	Service *service.ProjectService
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 func NewProjectController(service *service.ProjectService) *ProjectController {
 	return &ProjectController{Service: service}
 }
 
 func (vc *ProjectController) HandleEntry(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		respondJSON(w, http.StatusMethodNotAllowed, ErrorResponse{"method not allowed"})
 		return
 	}
 
 	var v model.ProjectModel
 	if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		respondJSON(w, http.StatusBadRequest, ErrorResponse{err.Error()})
 		return
 	}
 
 	if err := vc.Service.CreateEntry(&v); err != nil {
-		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		respondJSON(w, http.StatusInternalServerError, ErrorResponse{err.Error()})
 		return
 	}
 
+	respondJSON(w, http.StatusCreated, v)
+}
+
+func respondJSON(w http.ResponseWriter, status int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(v)
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(payload)
 }
