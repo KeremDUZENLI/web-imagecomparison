@@ -2,15 +2,15 @@
 Image Comparison Algorithm
 https://keremduzenli.github.io/web-imagecomparison/
 
-## npm
-cd .\backend\
-npm install
-npm start
-
 ## docker
 docker-compose build --no-cache
 docker-compose up
 docker ps
+
+## npm
+cd .\backend\
+npm install
+npm start
 
 
 # Setup Summary
