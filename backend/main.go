@@ -3,33 +3,27 @@ package main
 import (
 	"log"
 	"net/http"
-
-	"web-imagecomparison/common/env"
-	"web-imagecomparison/controller"
+	"web-imagecomparison/app"
 	"web-imagecomparison/database"
-	"web-imagecomparison/repository"
-	"web-imagecomparison/service"
+	"web-imagecomparison/env"
 )
 
 func main() {
 	env.Load()
+
 	db, err := database.ConnectDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	if err := repository.InitTable(db); err != nil {
+	application, err := app.RunApp(db)
+	if err != nil {
 		log.Fatal(err)
 	}
+	application.Routes()
 
-	repo := repository.NewProjectRepository(db)
-	svc := service.NewProjectService(repo)
-	ctrl := controller.NewProjectController(svc)
-
-	http.Handle("/", http.FileServer(http.Dir("../docs")))
-	http.HandleFunc("/api/votes", ctrl.HandleEntry)
-
-	log.Println("✅ Server started at :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	serverPort := ":" + env.SERVER_PORT
+	log.Printf("✅ Server starting on %s\n", serverPort)
+	log.Fatal(http.ListenAndServe(serverPort, nil))
 }

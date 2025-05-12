@@ -12,6 +12,8 @@ var (
 	DB_PASSWORD string
 	DB_NAME     string
 	DB_PORT     string
+
+	SERVER_PORT string
 )
 
 func Load() {
@@ -22,4 +24,6 @@ func Load() {
 	DB_PASSWORD = os.Getenv("DB_PASSWORD")
 	DB_NAME = os.Getenv("DB_NAME")
 	DB_PORT = os.Getenv("DB_PORT")
+
+	SERVER_PORT = os.Getenv("SERVER_PORT")
 }

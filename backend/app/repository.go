@@ -1,9 +1,7 @@
-package repository
+package app
 
 import (
 	"database/sql"
-
-	"web-imagecomparison/model"
 )
 
 const (
@@ -46,7 +44,7 @@ func NewProjectRepository(db *sql.DB) *ProjectRepository {
 	return &ProjectRepository{DB: db}
 }
 
-func (r *ProjectRepository) Insert(v *model.ProjectModel) error {
+func (r *ProjectRepository) Insert(v *ProjectModel) error {
 	return r.DB.QueryRow(
 		insertRowQuery,
 		v.UserName,

@@ -1,22 +1,19 @@
-package controller
+package app
 
 import (
 	"encoding/json"
 	"net/http"
-
-	"web-imagecomparison/model"
-	"web-imagecomparison/service"
 )
 
 type ProjectController struct {
-	Service *service.ProjectService
+	Service *ProjectService
 }
 
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
-func NewProjectController(service *service.ProjectService) *ProjectController {
+func NewProjectController(service *ProjectService) *ProjectController {
 	return &ProjectController{Service: service}
 }
 
@@ -26,7 +23,7 @@ func (vc *ProjectController) HandleEntry(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	var v model.ProjectModel
+	var v ProjectModel
 	if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
 		respondJSON(w, http.StatusBadRequest, ErrorResponse{err.Error()})
 		return

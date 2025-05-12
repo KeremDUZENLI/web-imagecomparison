@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"web-imagecomparison/common/env"
+	"web-imagecomparison/env"
 
 	_ "github.com/lib/pq"
 )
