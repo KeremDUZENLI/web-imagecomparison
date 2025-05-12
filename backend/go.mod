@@ -1,4 +1,4 @@
-module github.com/keremduzenli/web-imagecomparison/backend
+module web-imagecomparison
 
 go 1.23.1
 
