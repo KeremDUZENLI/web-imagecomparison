@@ -1,7 +1,7 @@
 import os
 
 
-EXCLUDE = {'__pycache__', '.git', '.venv', 'backend\\node_modules\\', 'frontend\\images\\'}
+EXCLUDE = {'__pycache__', '.git', '.venv', 'backend\\node_modules\\', 'docs\\images\\'}
 
 def is_excluded(path):
     for excluded in EXCLUDE:
