@@ -65,7 +65,7 @@ func (r *ProjectRepository) InsertTableVotes(v *ProjectModel) error {
 		Scan(&v.ID, &v.CreatedAt)
 }
 
-func (r *ProjectRepository) GetallTableRatings() (map[string]int, error) {
+func (r *ProjectRepository) GetAllTableRatings() (map[string]int, error) {
 	rows, err := r.DB.Query("SELECT image_name, rating FROM ratings")
 	if err != nil {
 		return nil, err

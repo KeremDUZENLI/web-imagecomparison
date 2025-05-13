@@ -18,7 +18,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := runPythonScript("helpers/project-structure.py"); err != nil {
+	if err := runPythonScript("helpers/project_structure.py"); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to run Python script: %v\n", err)
 	}
 }

@@ -1,6 +1,7 @@
 package env
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -26,4 +27,23 @@ func Load() {
 	DB_PORT = os.Getenv("DB_PORT")
 
 	SERVER_PORT = os.Getenv("SERVER_PORT")
+
+	validateConfig()
+}
+
+func validateConfig() {
+	required := map[string]string{
+		"DB_HOST":     DB_HOST,
+		"DB_USER":     DB_USER,
+		"DB_PASSWORD": DB_PASSWORD,
+		"DB_NAME":     DB_NAME,
+		"DB_PORT":     DB_PORT,
+		"SERVER_PORT": SERVER_PORT,
+	}
+	for key, val := range required {
+		if val == "" {
+			fmt.Fprintf(os.Stderr, "environment variable %s is required\n", key)
+			os.Exit(1)
+		}
+	}
 }

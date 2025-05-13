@@ -17,12 +17,12 @@ func main() {
 	}
 	defer db.Close()
 
-	application, err := app.RunApp(db)
+	application, err := app.InitApp(db)
 	if err != nil {
 		log.Fatal(err)
 	}
-	application.Routes()
 
+	router := app.NewRouter(application.Service)
 	log.Printf("✅ http://localhost:%s", env.SERVER_PORT)
-	log.Fatal(http.ListenAndServe(":"+env.SERVER_PORT, nil))
+	log.Fatal(http.ListenAndServe(":"+env.SERVER_PORT, router))
 }

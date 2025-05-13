@@ -8,18 +8,19 @@ func NewProjectService(repo *ProjectRepository) *ProjectService {
 	return &ProjectService{Repo: repo}
 }
 
-func (s *ProjectService) CreateServiceEntry(v *ProjectModel) error {
-	if err := s.Repo.InsertTableVotes(v); err != nil {
-		return err
-	}
+func (s *ProjectService) RecordVote(v *ProjectModel) error {
+	return s.Repo.InsertTableVotes(v)
+}
+
+func (s *ProjectService) RecalculateRatings(v *ProjectModel) error {
 	delta := v.EloWinnerNew - v.EloWinnerPrevious
 	return s.Repo.UpdateTableRatings(v.ImageWinner, v.ImageLoser, delta)
 }
 
-func (s *ProjectService) GetallServiceRatings() (map[string]int, error) {
-	return s.Repo.GetallTableRatings()
+func (s *ProjectService) GetAllRatings() (map[string]int, error) {
+	return s.Repo.GetAllTableRatings()
 }
 
-func (s *ProjectService) UpdateServiceRatings(winner, loser string, delta int) error {
+func (s *ProjectService) UpdateRatings(winner, loser string, delta int) error {
 	return s.Repo.UpdateTableRatings(winner, loser, delta)
 }
