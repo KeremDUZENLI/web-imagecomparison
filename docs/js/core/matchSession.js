@@ -1,4 +1,4 @@
-import { pickPair, updateElo, shouldContinue } from './elo.js';
+import { pickPair, updateElo, shouldContinue } from './eloCalculator.js';
 
 export class MatchSession {
   constructor(images, kFactor, maxMoves, convergenceThreshold) {

@@ -1,4 +1,4 @@
-const IMAGES_FOLDER = 'images/';
+const IMAGES_FOLDER = '../images/';
 
 export function showPair(dom, pair, current, total) {
   dom.imgA.src = IMAGES_FOLDER + pair[0];

@@ -1,9 +1,9 @@
-import { initDOM } from '../ui/domElements.js';
-import { showPair } from '../ui/displayPair.js';
-import { showFinal } from '../ui/displayResults.js';
-import { loadImages } from './infrastructure/imageLoader.js';
-import { logVote } from './infrastructure/voteLogger.js';
 import { MatchSession } from './core/matchSession.js';
+import { loadImages }   from './infrastructure/imageLoader.js';
+import { logVote }      from './infrastructure/voteLogger.js';
+import { showPair }     from './ui/displayPair.js';
+import { showFinal }    from './ui/displayResults.js';
+import { initDOM }      from './ui/domElements.js';
 
 const MAX_MOVES = 10;
 const K_FACTOR = 32;

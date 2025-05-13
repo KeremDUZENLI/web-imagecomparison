@@ -31,13 +31,17 @@ def scan_folder(path, root):
             result[name] = None
     return result
 
-def print_tree(tree, indent=""):
-    for name, content in tree.items():
-        print(f"{indent}- {name}")
-        if content is not None:
-            print_tree(content, indent + "  ")
+def ASCII_tree(tree, prefix=""):
+    entries = list(tree.items())
+    for idx, (name, subtree) in enumerate(entries):
+        is_last = (idx == len(entries) - 1)
+        branch = "└── " if is_last else "├── "
+        print(f"{prefix}{branch}{name}")
+        if subtree is not None:
+            extension = "    " if is_last else "│   "
+            ASCII_tree(subtree, prefix + extension)
 
 
 root_dir = os.path.abspath(os.path.join(__file__, "..", ".."))
 structure = {os.path.basename(root_dir): scan_folder(root_dir, root_dir)}
-print_tree(structure)
+ASCII_tree(structure)

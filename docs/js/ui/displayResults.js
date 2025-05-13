@@ -1,4 +1,4 @@
-const IMAGES_FOLDER = 'images/';
+const IMAGES_FOLDER = '../images/';
 
 export function showFinal(dom, ratings) {
   dom.container.style.display = 'none';

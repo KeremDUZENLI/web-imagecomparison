@@ -1,6 +1,5 @@
 export async function logVote(data) {
   try {
-    console.log('Sending vote:', data);
     await fetch('/api/votes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

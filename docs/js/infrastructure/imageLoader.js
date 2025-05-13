@@ -1,4 +1,4 @@
-const IMAGE_JSON_PATH = 'images.json';
+const IMAGE_JSON_PATH = '../images.json';
 
 export async function loadImages() {
   const res = await fetch(IMAGE_JSON_PATH);
