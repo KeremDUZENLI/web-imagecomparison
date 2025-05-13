@@ -26,8 +26,7 @@ export function showFinal(dom, ratings) {
   const sorted = Object.entries(ratings)
     .sort(([, r1], [, r2]) => r2 - r1);
 
-  dom.results.innerHTML = '<h2>Final Ranking</h2>' +
-    sorted.map(([file, score]) =>
+  dom.results.innerHTML = '<h2>Final Ranking</h2>' + sorted.map(([file, score]) =>
       `<div class="result-row">
          <img src="${IMAGES_FOLDER + file}" alt="${file}" />
          <div>${file} — ${score} ELO</div>

@@ -3,18 +3,23 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
 )
 
-func main() {
-	suffixes := []string{"html", "js", ".go"}
-	ignore := []string{"image-json.js", "project-structure.py", "scan-files.go"}
+var suffixes = []string{"js"}
+var ignore = []string{"helpers"}
 
+func main() {
 	if err := walkTree(".", suffixes, ignore); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
+	}
+
+	if err := runPythonScript("helpers/project-structure.py"); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to run Python script: %v\n", err)
 	}
 }
 
@@ -37,13 +42,16 @@ func walkTree(dir string, suffixes, ignore []string) error {
 		path := filepath.Join(dir, e.Name())
 
 		if e.IsDir() {
+			if shouldIgnore(path, ignore) {
+				continue
+			}
 			if err := walkTree(path, suffixes, ignore); err != nil {
 				return err
 			}
 			continue
 		}
 
-		if shouldIgnore(e.Name(), ignore) || !hasSuffix(path, suffixes) {
+		if !hasSuffix(path, suffixes) {
 			continue
 		}
 
@@ -65,9 +73,9 @@ func walkTree(dir string, suffixes, ignore []string) error {
 	return nil
 }
 
-func shouldIgnore(name string, ignore []string) bool {
-	for _, ig := range ignore {
-		if name == ig {
+func shouldIgnore(path string, ignore []string) bool {
+	for _, dir := range ignore {
+		if strings.HasPrefix(filepath.ToSlash(path), dir+"/") || filepath.ToSlash(path) == dir {
 			return true
 		}
 	}
@@ -81,4 +89,11 @@ func hasSuffix(path string, suffixes []string) bool {
 		}
 	}
 	return false
+}
+
+func runPythonScript(script string) error {
+	cmd := exec.Command("python", script)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
