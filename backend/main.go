@@ -23,7 +23,6 @@ func main() {
 	}
 	application.Routes()
 
-	serverPort := ":" + env.SERVER_PORT
-	log.Printf("✅ Server starting on %s\n", serverPort)
-	log.Fatal(http.ListenAndServe(serverPort, nil))
+	log.Printf("✅ http://localhost:%s", env.SERVER_PORT)
+	log.Fatal(http.ListenAndServe(":"+env.SERVER_PORT, nil))
 }
