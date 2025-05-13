@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	createTableQuery = `
+	createTableVotesQuery = `
 		CREATE TABLE IF NOT EXISTS votes (
 			id SERIAL PRIMARY KEY,
 			user_name TEXT,
@@ -20,7 +20,13 @@ const (
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		);`
 
-	insertRowQuery = `
+	createTableRatingsQuery = `
+		CREATE TABLE IF NOT EXISTS ratings (
+			image_name TEXT PRIMARY KEY,
+			rating     INTEGER NOT NULL
+	);`
+
+	insertTableVotesQuery = `
 		INSERT INTO votes (
 			user_name, 
 			image_a, 
@@ -44,9 +50,9 @@ func NewProjectRepository(db *sql.DB) *ProjectRepository {
 	return &ProjectRepository{DB: db}
 }
 
-func (r *ProjectRepository) Insert(v *ProjectModel) error {
+func (r *ProjectRepository) InsertTableVotes(v *ProjectModel) error {
 	return r.DB.QueryRow(
-		insertRowQuery,
+		insertTableVotesQuery,
 		v.UserName,
 		v.ImageA,
 		v.ImageB,
@@ -59,7 +65,59 @@ func (r *ProjectRepository) Insert(v *ProjectModel) error {
 		Scan(&v.ID, &v.CreatedAt)
 }
 
-func InitTable(db *sql.DB) error {
-	_, err := db.Exec(createTableQuery)
+func (r *ProjectRepository) GetallTableRatings() (map[string]int, error) {
+	rows, err := r.DB.Query("SELECT image_name, rating FROM ratings")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	m := make(map[string]int, 0)
+	for rows.Next() {
+		var img string
+		var rt int
+		if err := rows.Scan(&img, &rt); err != nil {
+			return nil, err
+		}
+		m[img] = rt
+	}
+	return m, nil
+}
+
+func (r *ProjectRepository) UpdateTableRatings(winner, loser string, delta int) error {
+	tx, err := r.DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.Exec(`
+        INSERT INTO ratings (image_name, rating)
+        VALUES ($1, 1500 + $2)
+        ON CONFLICT (image_name) DO UPDATE
+        SET rating = ratings.rating + $2;`,
+		winner, delta); err != nil {
+		return err
+	}
+
+	if _, err := tx.Exec(`
+        INSERT INTO ratings (image_name, rating)
+        VALUES ($1, 1500 - $2)
+        ON CONFLICT (image_name) DO UPDATE
+        SET rating = ratings.rating - $2;`,
+		loser, delta); err != nil {
+		return err
+	}
+
+	return tx.Commit()
+}
+
+func InitTableVotes(db *sql.DB) error {
+	_, err := db.Exec(createTableVotesQuery)
+	return err
+}
+
+func InitTableRatings(db *sql.DB) error {
+	_, err := db.Exec(createTableRatingsQuery)
 	return err
 }

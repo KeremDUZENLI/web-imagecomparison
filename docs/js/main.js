@@ -16,7 +16,10 @@ window.addEventListener('load', async () => {
 
   try {
     const images = await loadImages();
-    session = new MatchSession(images, K_FACTOR, MAX_MOVES, CONVERGENCE_THRESHOLD);
+    const ratings = await loadRatings();
+
+    session = new MatchSession(images, K_FACTOR, MAX_MOVES, CONVERGENCE_THRESHOLD, ratings);
+
     userName = prompt('Enter your name:');
     if (!userName) return location.reload();
 
@@ -31,6 +34,15 @@ window.addEventListener('load', async () => {
 function bindUIEvents() {
   dom.btnA.addEventListener('click', () => handleChoice(0));
   dom.btnB.addEventListener('click', () => handleChoice(1));
+}
+
+function renderNextPair() {
+  if (session.isDone()) {
+    showFinal(dom, session.getRatings());
+  } else {
+    currentPair = session.nextPair();
+    showPair(dom, currentPair, session.matchesDone, MAX_MOVES);
+  }
 }
 
 async function handleChoice(winnerIndex) {
@@ -56,11 +68,8 @@ async function handleChoice(winnerIndex) {
   renderNextPair();
 }
 
-function renderNextPair() {
-  if (session.isDone()) {
-    showFinal(dom, session.getRatings());
-  } else {
-    currentPair = session.nextPair();
-    showPair(dom, currentPair, session.matchesDone, MAX_MOVES);
-  }
+async function loadRatings() {
+  const res = await fetch('/api/ratings');
+  if (!res.ok) throw new Error('Failed to load ratings');
+  return res.json();
 }

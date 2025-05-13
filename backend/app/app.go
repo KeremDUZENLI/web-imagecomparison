@@ -11,9 +11,13 @@ type App struct {
 }
 
 func RunApp(db *sql.DB) (*App, error) {
-	if err := InitTable(db); err != nil {
+	if err := InitTableVotes(db); err != nil {
 		return nil, err
 	}
+	if err := InitTableRatings(db); err != nil {
+		return nil, err
+	}
+
 	repo := NewProjectRepository(db)
 	svc := NewProjectService(repo)
 	return &App{DB: db, Service: svc}, nil
@@ -22,5 +26,6 @@ func RunApp(db *sql.DB) (*App, error) {
 func (a *App) Routes() {
 	ctrl := NewProjectController(a.Service)
 	http.Handle("/", http.FileServer(http.Dir("../docs")))
-	http.HandleFunc("/api/votes", ctrl.HandleEntry)
+	http.HandleFunc("/api/votes", ctrl.HandleVotes)
+	http.HandleFunc("/api/ratings", ctrl.HandleRatings)
 }

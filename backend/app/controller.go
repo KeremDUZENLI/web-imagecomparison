@@ -17,7 +17,7 @@ func NewProjectController(service *ProjectService) *ProjectController {
 	return &ProjectController{Service: service}
 }
 
-func (vc *ProjectController) HandleEntry(w http.ResponseWriter, r *http.Request) {
+func (vc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		respondJSON(w, http.StatusMethodNotAllowed, ErrorResponse{"method not allowed"})
 		return
@@ -29,12 +29,25 @@ func (vc *ProjectController) HandleEntry(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if err := vc.Service.CreateEntry(&v); err != nil {
+	if err := vc.Service.CreateServiceEntry(&v); err != nil {
 		respondJSON(w, http.StatusInternalServerError, ErrorResponse{err.Error()})
 		return
 	}
 
 	respondJSON(w, http.StatusCreated, v)
+}
+
+func (vc *ProjectController) HandleRatings(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		respondJSON(w, http.StatusMethodNotAllowed, ErrorResponse{"method not allowed"})
+		return
+	}
+	m, err := vc.Service.GetallServiceRatings()
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, ErrorResponse{err.Error()})
+		return
+	}
+	respondJSON(w, http.StatusOK, m)
 }
 
 func respondJSON(w http.ResponseWriter, status int, payload interface{}) {

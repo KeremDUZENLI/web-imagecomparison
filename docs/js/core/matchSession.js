@@ -1,16 +1,20 @@
 import { pickPair, updateElo, shouldContinue } from './eloCalculator.js';
 
 export class MatchSession {
-  constructor(images, kFactor, maxMoves, convergenceThreshold) {
+  constructor(images, kFactor, maxMoves, convergenceThreshold, initialRatings = {}) {
     this.images = images;
     this.kFactor = kFactor;
     this.maxMoves = maxMoves;
     this.convergenceThreshold = convergenceThreshold;
-    this.ratings = {};
+    this.ratings = { ...initialRatings };
     this.recentDeltas = [];
     this.matchesDone = 0;
 
-    images.forEach(img => this.ratings[img] = 1500);
+    images.forEach(img => {
+      if (this.ratings[img] === undefined) {
+        this.ratings[img] = 1500;
+      }
+    });
   }
 
   nextPair() {
@@ -23,7 +27,12 @@ export class MatchSession {
   }
 
   isDone() {
-    return !shouldContinue(this.recentDeltas, this.matchesDone, this.maxMoves, this.convergenceThreshold);
+    return !shouldContinue(
+      this.recentDeltas,
+      this.matchesDone,
+      this.maxMoves,
+      this.convergenceThreshold
+    );
   }
 
   getRatings() {
