@@ -8,7 +8,6 @@ import (
 const (
 	createTableVotesQuery = `
 		CREATE TABLE IF NOT EXISTS votes (
-			id 					 SERIAL PRIMARY KEY,
 			user_name 			 TEXT,
 			image_winner 		 TEXT,
 			image_loser 		 TEXT,
@@ -36,7 +35,7 @@ const (
 			elo_loser_new
 		)
 		VALUES ($1,$2,$3,$4,$5,$6,$7)
-		RETURNING id, created_at;`
+		RETURNING created_at;`
 
 	insertTableRatingsQuery = `
 		INSERT INTO ratings(image, elo)
@@ -94,7 +93,7 @@ func (r *projectRepository) InsertTableVotes(ctx context.Context, votesModel *Vo
 		votesModel.EloWinnerNew,
 		votesModel.EloLoserPrevious,
 		votesModel.EloLoserNew,
-	).Scan(&votesModel.ID, &votesModel.CreatedAt)
+	).Scan(&votesModel.CreatedAt)
 }
 
 func (r *projectRepository) InsertTableRatings(ctx context.Context, ratings ...RatingsModel) error {

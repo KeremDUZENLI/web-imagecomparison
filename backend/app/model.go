@@ -5,7 +5,6 @@ import (
 )
 
 type VotesModel struct {
-	ID                int       `json:"id,omitempty"`
 	UserName          string    `json:"userName"`
 	ImageWinner       string    `json:"imageWinner"`
 	ImageLoser        string    `json:"imageLoser"`
