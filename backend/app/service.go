@@ -7,8 +7,9 @@ import (
 )
 
 type ProjectService interface {
-	PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error)
+	GetAllUserNames(ctx context.Context) ([]string, error)
 	GetAllRatings(ctx context.Context) ([]RatingsModel, error)
+	PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error)
 }
 
 type projectService struct {
@@ -17,6 +18,14 @@ type projectService struct {
 
 func NewProjectService(repo ProjectRepository) ProjectService {
 	return &projectService{repository: repo}
+}
+
+func (ps *projectService) GetAllUserNames(ctx context.Context) ([]string, error) {
+	return ps.repository.GetAllUserNames(ctx)
+}
+
+func (ps *projectService) GetAllRatings(ctx context.Context) ([]RatingsModel, error) {
+	return ps.repository.GetAllTableRatings(ctx)
 }
 
 func (ps *projectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error) {
@@ -65,8 +74,4 @@ func (ps *projectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesMo
 	}
 
 	return vote, nil
-}
-
-func (ps *projectService) GetAllRatings(ctx context.Context) ([]RatingsModel, error) {
-	return ps.repository.GetAllTableRatings(ctx)
 }

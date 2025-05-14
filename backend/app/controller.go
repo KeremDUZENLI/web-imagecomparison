@@ -13,6 +13,15 @@ func NewProjectController(svc ProjectService) *ProjectController {
 	return &ProjectController{service: svc}
 }
 
+func (pc *ProjectController) HandleUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := pc.service.GetAllUserNames(r.Context())
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not fetch users"})
+		return
+	}
+	respondJSON(w, http.StatusOK, users)
+}
+
 func (pc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request) {
 	var votesDto VotesDTO
 	if err := json.NewDecoder(r.Body).Decode(&votesDto); err != nil {

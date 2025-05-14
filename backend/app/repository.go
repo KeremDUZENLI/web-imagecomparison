@@ -43,11 +43,15 @@ const (
         ON CONFLICT (image)
         DO UPDATE SET elo = EXCLUDED.elo;`
 
+	getDistinctUsersQuery = `
+		SELECT DISTINCT user_name FROM votes;`
+
 	getTableRatingsQuery = `
 		SELECT image, elo FROM ratings;`
 )
 
 type ProjectRepository interface {
+	GetAllUserNames(ctx context.Context) ([]string, error)
 	GetAllTableRatings(ctx context.Context) ([]RatingsModel, error)
 	InsertTableVotes(ctx context.Context, votesModel *VotesModel) error
 	InsertTableRatings(ctx context.Context, ratings ...RatingsModel) error
@@ -59,6 +63,24 @@ type projectRepository struct {
 
 func NewProjectRepository(db *sql.DB) ProjectRepository {
 	return &projectRepository{sqlDatabase: db}
+}
+
+func (r *projectRepository) GetAllUserNames(ctx context.Context) ([]string, error) {
+	rows, err := r.sqlDatabase.QueryContext(ctx, getDistinctUsersQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []string
+	for rows.Next() {
+		var u string
+		if err := rows.Scan(&u); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	return users, nil
 }
 
 func (r *projectRepository) GetAllTableRatings(ctx context.Context) ([]RatingsModel, error) {

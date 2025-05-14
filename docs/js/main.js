@@ -1,22 +1,23 @@
 import { MatchSession } from './core/matchSession.js';
 import { loadImages }   from './infrastructure/loadImages.js';
+import { loadUserName } from './infrastructure/loadUserName.js';
 import { postVote }     from './infrastructure/postVote.js';
 import { showPair }     from './ui/showPair.js';
 import { initDOM }      from './ui/initDOM.js'
 
-let session, userName, dom;
+let dom, userName, images, session;
 const MIN_VOTES = 10;
 
 async function bootstrap() {
   dom = initDOM();
 
-  userName = prompt('Enter your name:');
+  userName = await loadUserName();
   if (!userName) {
     return location.reload();
   }
 
   try {
-    const images = await loadImages();
+    images = await loadImages();
     session = new MatchSession(images, MIN_VOTES);
   } catch (e) {
     console.error(e);
