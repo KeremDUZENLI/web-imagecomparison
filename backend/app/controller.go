@@ -9,61 +9,46 @@ type ProjectController struct {
 	Service *ProjectService
 }
 
-type ErrorResponse struct {
-	Error string `json:"error"`
+func NewProjectController(svc *ProjectService) *ProjectController {
+	return &ProjectController{Service: svc}
 }
 
-func NewProjectController(service *ProjectService) *ProjectController {
-	return &ProjectController{Service: service}
-}
-
-func (vc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		respondError(w, http.StatusMethodNotAllowed, "method not allowed")
+func (pc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request) {
+	var dto VoteDTO
+	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request payload"})
 		return
 	}
 
-	var v ProjectModel
-	if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
-		respondError(w, http.StatusBadRequest, "invalid request payload")
-		return
-	}
-
-	if err := vc.Service.RecordVote(&v); err != nil {
-		respondError(w, http.StatusInternalServerError, "failed to record vote")
-		return
-	}
-
-	if err := vc.Service.RecalculateRatings(&v); err != nil {
-		respondError(w, http.StatusInternalServerError, "failed to update ratings")
-		return
-	}
-
-	respondJSON(w, http.StatusCreated, v)
-}
-
-func (vc *ProjectController) HandleRatings(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		respondError(w, http.StatusMethodNotAllowed, "method not allowed")
-		return
-	}
-
-	m, err := vc.Service.GetAllRatings()
+	vote, err := pc.Service.ProcessVote(r.Context(), &dto)
 	if err != nil {
-		respondError(w, http.StatusInternalServerError, "failed to get all ratings")
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not process vote"})
 		return
 	}
-	respondJSON(w, http.StatusOK, m)
+
+	ratings, err := pc.Service.GetAllRatings(r.Context())
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not fetch ratings"})
+		return
+	}
+
+	respondJSON(w, http.StatusCreated, map[string]any{
+		"vote":    vote,
+		"ratings": ratings,
+	})
 }
 
-func respondJSON(w http.ResponseWriter, status int, payload interface{}) {
+func (pc *ProjectController) HandleRatings(w http.ResponseWriter, r *http.Request) {
+	ratings, err := pc.Service.GetAllRatings(r.Context())
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to get all ratings"})
+		return
+	}
+	respondJSON(w, http.StatusOK, ratings)
+}
+
+func respondJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(payload)
-}
-
-func respondError(w http.ResponseWriter, status int, msg string) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(ErrorResponse{Error: msg})
 }

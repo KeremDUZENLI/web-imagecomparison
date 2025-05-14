@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type ProjectModel struct {
+type VoteModel struct {
 	ID                int       `json:"id,omitempty"`
 	UserName          string    `json:"userName"`
 	ImageA            string    `json:"imageA"`

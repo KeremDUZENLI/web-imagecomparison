@@ -91,3 +91,12 @@ Response: saved vote with `id` and `createdAt`.
 MIT
 
 \*Files ending in `*` should be created from their `.example` counterparts.
+
+
+✅ STRUCTURE OVERVIEW (Current Mapping)
+Layer	              Responsibility	                       Current File(s)
+Presentation	      HTTP handlers (controllers)	           controller.go, router.go
+Application	        Business logic, use cases	             service.go
+Domain	            Models/entities	                       model.go
+Infrastructure	    Database access, external systems	     repository.go, connect.go
+Startup	            App init, routing, environment	       main.go, app.go, env.go

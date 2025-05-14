@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+
 	"web-imagecomparison/app"
 	"web-imagecomparison/database"
 	"web-imagecomparison/env"

@@ -38,6 +38,7 @@ func validateConfig() {
 		"DB_PASSWORD": DB_PASSWORD,
 		"DB_NAME":     DB_NAME,
 		"DB_PORT":     DB_PORT,
+
 		"SERVER_PORT": SERVER_PORT,
 	}
 	for key, val := range required {

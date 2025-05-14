@@ -1,15 +1,16 @@
 import { MatchSession } from './core/matchSession.js';
 import { loadImages }   from './infrastructure/imageLoader.js';
+import { loadRatings }  from './infrastructure/ratingLoader.js';
 import { logVote }      from './infrastructure/voteLogger.js';
 import { showPair }     from './ui/displayPair.js';
 import { showFinal }    from './ui/displayResults.js';
 import { initDOM }      from './ui/domElements.js';
-
-const MAX_MOVES = 10;
-const K_FACTOR = 32;
-const CONVERGENCE_THRESHOLD = 0.5;
+import constants         from '../env/constants.js';
 
 let dom, session, currentPair, userName;
+
+const MIN_VOTES      = constants.MIN_VOTES;
+const DEFAULT_RATING = constants.DEFAULT_RATING;
 
 window.addEventListener('load', async () => {
   dom = initDOM();
@@ -18,7 +19,7 @@ window.addEventListener('load', async () => {
     const images = await loadImages();
     const ratings = await loadRatings();
 
-    session = new MatchSession(images, K_FACTOR, MAX_MOVES, CONVERGENCE_THRESHOLD, ratings);
+    session = new MatchSession(images, MIN_VOTES, DEFAULT_RATING, ratings);
 
     userName = prompt('Enter your name:');
     if (!userName) return location.reload();
@@ -41,35 +42,34 @@ function renderNextPair() {
     showFinal(dom, session.getRatings());
   } else {
     currentPair = session.nextPair();
-    showPair(dom, currentPair, session.matchesDone, MAX_MOVES);
+    showPair(dom, currentPair, session.matchesDone, MIN_VOTES);
   }
 }
 
-async function handleChoice(winnerIndex) {
-  const winner = currentPair[winnerIndex];
-  const loser = currentPair[1 - winnerIndex];
-  const oldRatings = { winner: session.getRatings()[winner], loser: session.getRatings()[loser] };
+async function handleChoice(idx) {
+  const [winner, loser] = [currentPair[idx], currentPair[1 - idx]];
+  const oldRound = {
+    winner: session.getRatings()[winner],
+    loser:  session.getRatings()[loser],
+  };
 
-  session.applyVote(winner, loser);
-  const newRatings = { winner: session.getRatings()[winner], loser: session.getRatings()[loser] };
+  try {
+    const { vote, ratings } = await logVote({
+      userName,
+      imageA: currentPair[0],
+      imageB: currentPair[1],
+      imageWinner: winner,
+      imageLoser:  loser,
+      eloWinnerPrevious: oldRound.winner,
+      eloWinnerNew:      session.getRatings()[winner],
+      eloLoserPrevious:  oldRound.loser,
+      eloLoserNew:       session.getRatings()[loser],
+    });
 
-  await logVote({
-    userName,
-    imageA: currentPair[0],
-    imageB: currentPair[1],
-    imageWinner: winner,
-    imageLoser: loser,
-    eloWinnerPrevious: oldRatings.winner,
-    eloWinnerNew: newRatings.winner,
-    eloLoserPrevious: oldRatings.loser,
-    eloLoserNew: newRatings.loser
-  });
-
-  renderNextPair();
-}
-
-async function loadRatings() {
-  const res = await fetch('/api/ratings');
-  if (!res.ok) throw new Error('Failed to load ratings');
-  return res.json();
+    session.applyVote();
+    session.ratings = ratings;
+    renderNextPair();
+  } catch (err) {
+    alert(`Vote failed: ${err.message}`);
+  }
 }
