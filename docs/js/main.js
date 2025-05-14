@@ -1,75 +1,63 @@
 import { MatchSession } from './core/matchSession.js';
-import { loadImages }   from './infrastructure/imageLoader.js';
-import { loadRatings }  from './infrastructure/ratingLoader.js';
-import { logVote }      from './infrastructure/voteLogger.js';
-import { showPair }     from './ui/displayPair.js';
-import { showFinal }    from './ui/displayResults.js';
-import { initDOM }      from './ui/domElements.js';
-import constants         from '../env/constants.js';
+import { loadImages }   from './infrastructure/loadImages.js';
+import { postVote }     from './infrastructure/postVote.js';
+import { showPair }     from './ui/showPair.js';
+import { initDOM }      from './ui/initDOM.js';
 
-let dom, session, currentPair, userName;
+let session, userName, dom;
+const MIN_VOTES = 10;
 
-const MIN_VOTES      = constants.MIN_VOTES;
-const DEFAULT_RATING = constants.DEFAULT_RATING;
-
-window.addEventListener('load', async () => {
+async function bootstrap() {
   dom = initDOM();
+
+  userName = prompt('Enter your name:');
+  if (!userName) {
+    return location.reload();
+  }
 
   try {
     const images = await loadImages();
-    const ratings = await loadRatings();
-
-    session = new MatchSession(images, MIN_VOTES, DEFAULT_RATING, ratings);
-
-    userName = prompt('Enter your name:');
-    if (!userName) return location.reload();
-
-    bindUIEvents();
-    renderNextPair();
+    session = new MatchSession(images, MIN_VOTES);
   } catch (e) {
     console.error(e);
     alert('Initialization failed.');
+    return;
   }
-});
 
-function bindUIEvents() {
-  dom.btnA.addEventListener('click', () => handleChoice(0));
-  dom.btnB.addEventListener('click', () => handleChoice(1));
-}
+  dom.btnA.onclick = () => handleChoice(0);
+  dom.btnB.onclick = () => handleChoice(1);
 
-function renderNextPair() {
-  if (session.isDone()) {
-    showFinal(dom, session.getRatings());
-  } else {
-    currentPair = session.nextPair();
-    showPair(dom, currentPair, session.matchesDone, MIN_VOTES);
-  }
+  session.currentPair = loadNext();
 }
 
 async function handleChoice(idx) {
-  const [winner, loser] = [currentPair[idx], currentPair[1 - idx]];
-  const oldRound = {
-    winner: session.getRatings()[winner],
-    loser:  session.getRatings()[loser],
-  };
+  const pair = session.currentPair;
+  const winner = pair[idx];
+  const loser  = pair[1 - idx];
 
   try {
-    const { vote, ratings } = await logVote({
+    await postVote({
       userName,
-      imageA: currentPair[0],
-      imageB: currentPair[1],
+      imageA: pair[0],
+      imageB: pair[1],
       imageWinner: winner,
-      imageLoser:  loser,
-      eloWinnerPrevious: oldRound.winner,
-      eloWinnerNew:      session.getRatings()[winner],
-      eloLoserPrevious:  oldRound.loser,
-      eloLoserNew:       session.getRatings()[loser],
+      imageLoser: loser,
     });
-
     session.applyVote();
-    session.ratings = ratings;
-    renderNextPair();
+    session.currentPair = loadNext();
   } catch (err) {
     alert(`Vote failed: ${err.message}`);
   }
 }
+
+function loadNext() {
+  if (session.isDone()) {
+    dom.container.innerHTML = '<h2>Thanks! You have completed all votes.</h2>';
+    return;
+  }
+  const pair = session.nextPair();
+  showPair(dom, pair, session.matchesDone, MIN_VOTES);
+  return pair;
+}
+
+window.addEventListener('load', bootstrap);

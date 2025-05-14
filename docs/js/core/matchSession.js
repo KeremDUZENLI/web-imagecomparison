@@ -1,15 +1,18 @@
 export class MatchSession {
-  constructor(images, minVotes, defaultRating, initialRatings = {}) {
+  constructor(images, minVotes) {
     this.images = images;
     this.minVotes = minVotes;
     this.matchesDone = 0;
-    this.ratings = Object.fromEntries(
-      images.map(img => [img, initialRatings[img] ?? defaultRating])
-    );
   }
 
   nextPair() {
-    return pickPair(this.images, this.ratings);
+    const count = this.images.length;
+    const first = Math.floor(Math.random() * count);
+    let second = Math.floor(Math.random() * count);
+    while (second === first) {
+      second = Math.floor(Math.random() * count);
+    }
+    return [this.images[first], this.images[second]];
   }
 
   applyVote() {
@@ -19,14 +22,4 @@ export class MatchSession {
   isDone() {
     return this.matchesDone >= this.minVotes;
   }
-
-  getRatings() {
-    return this.ratings;
-  }
-}
-
-export function pickPair(images, ratings) {
-  const sorted = [...images].sort((a, b) => ratings[a] - ratings[b]);
-  const i = Math.floor(Math.random() * (sorted.length - 1));
-  return [sorted[i], sorted[i + 1]];
 }
