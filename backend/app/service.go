@@ -6,16 +6,21 @@ import (
 	"web-imagecomparison/env"
 )
 
-type ProjectService struct {
-	Repo *ProjectRepository
+type ProjectService interface {
+	PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error)
+	GetAllRatings(ctx context.Context) ([]RatingsModel, error)
 }
 
-func NewProjectService(repo *ProjectRepository) *ProjectService {
-	return &ProjectService{Repo: repo}
+type projectService struct {
+	repository ProjectRepository
 }
 
-func (ps *ProjectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error) {
-	ratings, err := ps.Repo.GetAllTableRatings(ctx)
+func NewProjectService(repo ProjectRepository) ProjectService {
+	return &projectService{repository: repo}
+}
+
+func (ps *projectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error) {
+	ratings, err := ps.repository.GetAllTableRatings(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -47,11 +52,11 @@ func (ps *ProjectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesMo
 		EloLoserNew:       prevL - delta,
 	}
 
-	if err := ps.Repo.InsertTableVotes(ctx, vote); err != nil {
+	if err := ps.repository.InsertTableVotes(ctx, vote); err != nil {
 		return nil, err
 	}
 
-	if err := ps.Repo.InsertTableRatings(
+	if err := ps.repository.InsertTableRatings(
 		ctx,
 		RatingsModel{Image: vote.ImageWinner, Elo: vote.EloWinnerNew},
 		RatingsModel{Image: vote.ImageLoser, Elo: vote.EloLoserNew},
@@ -62,6 +67,6 @@ func (ps *ProjectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesMo
 	return vote, nil
 }
 
-func (ps *ProjectService) GetAllRatings(ctx context.Context) ([]RatingsModel, error) {
-	return ps.Repo.GetAllTableRatings(ctx)
+func (ps *projectService) GetAllRatings(ctx context.Context) ([]RatingsModel, error) {
+	return ps.repository.GetAllTableRatings(ctx)
 }

@@ -48,16 +48,22 @@ const (
 		SELECT image, elo FROM ratings;`
 )
 
-type ProjectRepository struct {
-	DB *sql.DB
+type ProjectRepository interface {
+	GetAllTableRatings(ctx context.Context) ([]RatingsModel, error)
+	InsertTableVotes(ctx context.Context, votesModel *VotesModel) error
+	InsertTableRatings(ctx context.Context, ratings ...RatingsModel) error
 }
 
-func NewProjectRepository(db *sql.DB) *ProjectRepository {
-	return &ProjectRepository{DB: db}
+type projectRepository struct {
+	sqlDatabase *sql.DB
 }
 
-func (r *ProjectRepository) GetAllTableRatings(ctx context.Context) ([]RatingsModel, error) {
-	rows, err := r.DB.QueryContext(
+func NewProjectRepository(db *sql.DB) ProjectRepository {
+	return &projectRepository{sqlDatabase: db}
+}
+
+func (r *projectRepository) GetAllTableRatings(ctx context.Context) ([]RatingsModel, error) {
+	rows, err := r.sqlDatabase.QueryContext(
 		ctx,
 		getTableRatingsQuery,
 	)
@@ -77,8 +83,8 @@ func (r *ProjectRepository) GetAllTableRatings(ctx context.Context) ([]RatingsMo
 	return out, nil
 }
 
-func (r *ProjectRepository) InsertTableVotes(ctx context.Context, votesModel *VotesModel) error {
-	return r.DB.QueryRowContext(
+func (r *projectRepository) InsertTableVotes(ctx context.Context, votesModel *VotesModel) error {
+	return r.sqlDatabase.QueryRowContext(
 		ctx,
 		insertTableVotesQuery,
 		votesModel.UserName,
@@ -91,8 +97,8 @@ func (r *ProjectRepository) InsertTableVotes(ctx context.Context, votesModel *Vo
 	).Scan(&votesModel.ID, &votesModel.CreatedAt)
 }
 
-func (r *ProjectRepository) InsertTableRatings(ctx context.Context, ratings ...RatingsModel) error {
-	tx, err := r.DB.BeginTx(ctx, nil)
+func (r *projectRepository) InsertTableRatings(ctx context.Context, ratings ...RatingsModel) error {
+	tx, err := r.sqlDatabase.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}

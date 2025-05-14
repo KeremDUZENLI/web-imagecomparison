@@ -6,11 +6,11 @@ import (
 )
 
 type ProjectController struct {
-	Service *ProjectService
+	service ProjectService
 }
 
-func NewProjectController(svc *ProjectService) *ProjectController {
-	return &ProjectController{Service: svc}
+func NewProjectController(svc ProjectService) *ProjectController {
+	return &ProjectController{service: svc}
 }
 
 func (pc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request) {
@@ -20,13 +20,13 @@ func (pc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	votes, err := pc.Service.PostVote(r.Context(), &votesDto)
+	votes, err := pc.service.PostVote(r.Context(), &votesDto)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not process vote"})
 		return
 	}
 
-	ratings, err := pc.Service.GetAllRatings(r.Context())
+	ratings, err := pc.service.GetAllRatings(r.Context())
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not fetch ratings"})
 		return
@@ -39,7 +39,7 @@ func (pc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request)
 }
 
 func (pc *ProjectController) HandleRatings(w http.ResponseWriter, r *http.Request) {
-	ratings, err := pc.Service.GetAllRatings(r.Context())
+	ratings, err := pc.service.GetAllRatings(r.Context())
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to get all ratings"})
 		return

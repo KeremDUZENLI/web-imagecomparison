@@ -7,46 +7,42 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var (
-	DB_HOST     string
-	DB_USER     string
-	DB_PASSWORD string
-	DB_NAME     string
-	DB_PORT     string
-
-	SERVER_PORT string
-)
-
-func Load() {
-	if err := godotenv.Load(".env"); err != nil {
-		fmt.Println("No .env file found, using system env vars")
-	}
-
-	DB_HOST = os.Getenv("DB_HOST")
-	DB_USER = os.Getenv("DB_USER")
-	DB_PASSWORD = os.Getenv("DB_PASSWORD")
-	DB_NAME = os.Getenv("DB_NAME")
-	DB_PORT = os.Getenv("DB_PORT")
-
-	SERVER_PORT = os.Getenv("SERVER_PORT")
-
-	validateConfig()
+type Config struct {
+	DBHost     string
+	DBUser     string
+	DBPassword string
+	DBName     string
+	DBPort     string
+	ServerPort string
 }
 
-func validateConfig() {
-	required := map[string]string{
-		"DB_HOST":     DB_HOST,
-		"DB_USER":     DB_USER,
-		"DB_PASSWORD": DB_PASSWORD,
-		"DB_NAME":     DB_NAME,
-		"DB_PORT":     DB_PORT,
+func LoadConfig() (*Config, error) {
+	_ = godotenv.Load(".env")
 
-		"SERVER_PORT": SERVER_PORT,
+	cfg := &Config{
+		DBHost:     os.Getenv("DB_HOST"),
+		DBUser:     os.Getenv("DB_USER"),
+		DBPassword: os.Getenv("DB_PASSWORD"),
+		DBName:     os.Getenv("DB_NAME"),
+		DBPort:     os.Getenv("DB_PORT"),
+		ServerPort: os.Getenv("SERVER_PORT"),
 	}
-	for key, val := range required {
-		if val == "" {
-			fmt.Fprintf(os.Stderr, "environment variable %s is required\n", key)
-			os.Exit(1)
-		}
+
+	if err := validateConfig(cfg); err != nil {
+		return nil, err
 	}
+
+	return cfg, nil
+}
+
+func validateConfig(cfg *Config) error {
+	if cfg.DBHost == "" ||
+		cfg.DBUser == "" ||
+		cfg.DBPassword == "" ||
+		cfg.DBName == "" ||
+		cfg.DBPort == "" ||
+		cfg.ServerPort == "" {
+		return fmt.Errorf("missing required environment variables")
+	}
+	return nil
 }

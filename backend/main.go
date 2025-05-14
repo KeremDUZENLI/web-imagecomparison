@@ -10,20 +10,29 @@ import (
 )
 
 func main() {
-	env.Load()
-
-	db, err := database.ConnectDB()
+	cfg, err := env.LoadConfig()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("config load error: %v", err)
+	}
+
+	db, err := database.ConnectDB(cfg)
+	if err != nil {
+		log.Fatalf("db connect error: %v", err)
 	}
 	defer db.Close()
 
-	application, err := app.InitApp(db)
-	if err != nil {
-		log.Fatal(err)
+	if err := app.InitTableVotes(db); err != nil {
+		log.Fatalf("failed to init votes table: %v", err)
+	}
+	if err := app.InitTableRatings(db); err != nil {
+		log.Fatalf("failed to init ratings table: %v", err)
 	}
 
-	router := app.NewRouter(application.Service)
-	log.Printf("✅ http://localhost:%s", env.SERVER_PORT)
-	log.Fatal(http.ListenAndServe(":"+env.SERVER_PORT, router))
+	repo := app.NewProjectRepository(db)
+	svc := app.NewProjectService(repo)
+	controller := app.NewProjectController(svc)
+	router := app.NewRouter(controller)
+
+	log.Printf("✅ http://localhost:%s", cfg.ServerPort)
+	log.Fatal(http.ListenAndServe(":"+cfg.ServerPort, router))
 }
