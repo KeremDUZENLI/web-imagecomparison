@@ -14,13 +14,13 @@ func NewProjectController(svc *ProjectService) *ProjectController {
 }
 
 func (pc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request) {
-	var dto VoteDTO
-	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
+	var votesDto VotesDTO
+	if err := json.NewDecoder(r.Body).Decode(&votesDto); err != nil {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request payload"})
 		return
 	}
 
-	vote, err := pc.Service.ProcessVote(r.Context(), &dto)
+	votes, err := pc.Service.ProcessVote(r.Context(), &votesDto)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not process vote"})
 		return
@@ -33,7 +33,7 @@ func (pc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request)
 	}
 
 	respondJSON(w, http.StatusCreated, map[string]any{
-		"vote":    vote,
+		"votes":   votes,
 		"ratings": ratings,
 	})
 }

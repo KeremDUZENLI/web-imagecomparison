@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"database/sql"
-	"web-imagecomparison/env"
 )
 
 const (
@@ -42,6 +41,12 @@ const (
 	)
 	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
 	RETURNING id, created_at;`
+
+	insertTableRatingsQuery = `
+		INSERT INTO ratings(image_name, rating)
+		VALUES ($1, $2)
+        ON CONFLICT (image_name)
+        DO UPDATE SET rating = EXCLUDED.rating;`
 )
 
 type ProjectRepository struct {
@@ -52,68 +57,56 @@ func NewProjectRepository(db *sql.DB) *ProjectRepository {
 	return &ProjectRepository{DB: db}
 }
 
-func (r *ProjectRepository) InsertTableVotes(ctx context.Context, v *VoteModel) error {
-	return r.DB.QueryRowContext(
-		ctx,
-		insertTableVotesQuery,
-		v.UserName,
-		v.ImageA,
-		v.ImageB,
-		v.ImageWinner,
-		v.ImageLoser,
-		v.EloWinnerPrevious,
-		v.EloWinnerNew,
-		v.EloLoserPrevious,
-		v.EloLoserNew,
-	).Scan(&v.ID, &v.CreatedAt)
-}
-
-func (r *ProjectRepository) GetAllTableRatings(ctx context.Context) (map[string]int, error) {
+func (r *ProjectRepository) GetAllTableRatings(ctx context.Context) ([]RatingsModel, error) {
 	rows, err := r.DB.QueryContext(ctx, "SELECT image_name, rating FROM ratings")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	m := make(map[string]int)
+	var out []RatingsModel
 	for rows.Next() {
-		var img string
-		var rt int
-		if err := rows.Scan(&img, &rt); err != nil {
+		var m RatingsModel
+		if err := rows.Scan(&m.Image, &m.Elo); err != nil {
 			return nil, err
 		}
-		m[img] = rt
+		out = append(out, m)
 	}
-	return m, nil
+	return out, nil
 }
 
-func (r *ProjectRepository) UpdateTableRatings(ctx context.Context, winner string, loser string, delta int) error {
+func (r *ProjectRepository) InsertTableVotes(ctx context.Context, votesModel *VotesModel) error {
+	return r.DB.QueryRowContext(
+		ctx,
+		insertTableVotesQuery,
+		votesModel.UserName,
+		votesModel.ImageA,
+		votesModel.ImageB,
+		votesModel.ImageWinner,
+		votesModel.ImageLoser,
+		votesModel.EloWinnerPrevious,
+		votesModel.EloWinnerNew,
+		votesModel.EloLoserPrevious,
+		votesModel.EloLoserNew,
+	).Scan(&votesModel.ID, &votesModel.CreatedAt)
+}
+
+func (r *ProjectRepository) InsertTableRatings(ctx context.Context, ratings ...RatingsModel) error {
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	upsert := `
-		INSERT INTO ratings(image_name, rating)
-		VALUES ($1, $2)
-		ON CONFLICT (image_name) DO NOTHING;`
-	if _, err := tx.ExecContext(ctx, upsert, winner, env.DEFAULT_RATING); err != nil {
-		return err
-	}
-	if _, err := tx.ExecContext(ctx, upsert, loser, env.DEFAULT_RATING); err != nil {
-		return err
-	}
-
-	update := `
-		UPDATE ratings
-		SET rating = CASE
-			WHEN image_name = $1 THEN rating + $3
-			WHEN image_name = $2 THEN rating - $3
-		END
-		WHERE image_name IN ($1, $2);`
-	if _, err := tx.ExecContext(ctx, update, winner, loser, delta); err != nil {
-		return err
+	for _, rating := range ratings {
+		if _, err := tx.ExecContext(
+			ctx,
+			insertTableRatingsQuery,
+			rating.Image,
+			rating.Elo,
+		); err != nil {
+			return err
+		}
 	}
 
 	return tx.Commit()

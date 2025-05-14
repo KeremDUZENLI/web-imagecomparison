@@ -18,7 +18,9 @@ var (
 )
 
 func Load() {
-	godotenv.Load(".env")
+	if err := godotenv.Load(".env"); err != nil {
+		fmt.Println("No .env file found, using system env vars")
+	}
 
 	DB_HOST = os.Getenv("DB_HOST")
 	DB_USER = os.Getenv("DB_USER")

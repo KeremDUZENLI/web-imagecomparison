@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type VoteModel struct {
+type VotesModel struct {
 	ID                int       `json:"id,omitempty"`
 	UserName          string    `json:"userName"`
 	ImageA            string    `json:"imageA"`
@@ -16,4 +16,17 @@ type VoteModel struct {
 	EloLoserPrevious  int       `json:"eloLoserPrevious"`
 	EloLoserNew       int       `json:"eloLoserNew"`
 	CreatedAt         time.Time `json:"createdAt,omitempty"`
+}
+
+type VotesDTO struct {
+	UserName    string `json:"userName"`
+	ImageA      string `json:"imageA"`
+	ImageB      string `json:"imageB"`
+	ImageWinner string `json:"imageWinner"`
+	ImageLoser  string `json:"imageLoser"`
+}
+
+type RatingsModel struct {
+	Image string `json:"image"`
+	Elo   int    `json:"elo"`
 }
