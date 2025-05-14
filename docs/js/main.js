@@ -2,7 +2,7 @@ import { MatchSession } from './core/matchSession.js';
 import { loadImages }   from './infrastructure/loadImages.js';
 import { postVote }     from './infrastructure/postVote.js';
 import { showPair }     from './ui/showPair.js';
-import { initDOM }      from './ui/initDOM.js';
+import { initDOM }      from './ui/initDOM.js'
 
 let session, userName, dom;
 const MIN_VOTES = 10;
@@ -38,8 +38,6 @@ async function handleChoice(idx) {
   try {
     await postVote({
       userName,
-      imageA: pair[0],
-      imageB: pair[1],
       imageWinner: winner,
       imageLoser: loser,
     });

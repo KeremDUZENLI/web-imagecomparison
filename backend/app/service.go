@@ -14,7 +14,7 @@ func NewProjectService(repo *ProjectRepository) *ProjectService {
 	return &ProjectService{Repo: repo}
 }
 
-func (ps *ProjectService) ProcessVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error) {
+func (ps *ProjectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error) {
 	ratings, err := ps.Repo.GetAllTableRatings(ctx)
 	if err != nil {
 		return nil, err
@@ -39,8 +39,6 @@ func (ps *ProjectService) ProcessVote(ctx context.Context, dto *VotesDTO) (*Vote
 
 	vote := &VotesModel{
 		UserName:          dto.UserName,
-		ImageA:            dto.ImageA,
-		ImageB:            dto.ImageB,
 		ImageWinner:       dto.ImageWinner,
 		ImageLoser:        dto.ImageLoser,
 		EloWinnerPrevious: prevW,

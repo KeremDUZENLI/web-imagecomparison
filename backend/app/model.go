@@ -7,8 +7,6 @@ import (
 type VotesModel struct {
 	ID                int       `json:"id,omitempty"`
 	UserName          string    `json:"userName"`
-	ImageA            string    `json:"imageA"`
-	ImageB            string    `json:"imageB"`
 	ImageWinner       string    `json:"imageWinner"`
 	ImageLoser        string    `json:"imageLoser"`
 	EloWinnerPrevious int       `json:"eloWinnerPrevious"`
@@ -20,8 +18,6 @@ type VotesModel struct {
 
 type VotesDTO struct {
 	UserName    string `json:"userName"`
-	ImageA      string `json:"imageA"`
-	ImageB      string `json:"imageB"`
 	ImageWinner string `json:"imageWinner"`
 	ImageLoser  string `json:"imageLoser"`
 }

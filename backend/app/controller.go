@@ -20,7 +20,7 @@ func (pc *ProjectController) HandleVotes(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	votes, err := pc.Service.ProcessVote(r.Context(), &votesDto)
+	votes, err := pc.Service.PostVote(r.Context(), &votesDto)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not process vote"})
 		return

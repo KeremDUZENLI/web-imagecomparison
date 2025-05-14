@@ -7,46 +7,45 @@ import (
 
 const (
 	createTableVotesQuery = `
-	CREATE TABLE IF NOT EXISTS votes (
-		id SERIAL PRIMARY KEY,
-		user_name TEXT,
-		image_a TEXT,
-		image_b TEXT,
-		image_winner TEXT,
-		image_loser TEXT,
-		elo_winner_previous INTEGER,
-		elo_winner_new INTEGER,
-		elo_loser_previous INTEGER,
-		elo_loser_new INTEGER,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	);`
+		CREATE TABLE IF NOT EXISTS votes (
+			id 					 SERIAL PRIMARY KEY,
+			user_name 			 TEXT,
+			image_winner 		 TEXT,
+			image_loser 		 TEXT,
+			elo_winner_previous  INTEGER,
+			elo_winner_new 		 INTEGER,
+			elo_loser_previous 	 INTEGER,
+			elo_loser_new 		 INTEGER,
+			created_at 			 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		);`
 
 	createTableRatingsQuery = `
-	CREATE TABLE IF NOT EXISTS ratings (
-		image_name TEXT PRIMARY KEY,
-		rating     INTEGER NOT NULL
-	);`
+		CREATE TABLE IF NOT EXISTS ratings (
+			image 	TEXT PRIMARY KEY,
+			elo     INTEGER NOT NULL
+		);`
 
 	insertTableVotesQuery = `
-	INSERT INTO votes (
-		user_name,
-		image_a,
-		image_b,
-		image_winner,
-		image_loser,
-		elo_winner_previous,
-		elo_winner_new,
-		elo_loser_previous,
-		elo_loser_new
-	)
-	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-	RETURNING id, created_at;`
+		INSERT INTO votes (
+			user_name,
+			image_winner,
+			image_loser,
+			elo_winner_previous,
+			elo_winner_new,
+			elo_loser_previous,
+			elo_loser_new
+		)
+		VALUES ($1,$2,$3,$4,$5,$6,$7)
+		RETURNING id, created_at;`
 
 	insertTableRatingsQuery = `
-		INSERT INTO ratings(image_name, rating)
+		INSERT INTO ratings(image, elo)
 		VALUES ($1, $2)
-        ON CONFLICT (image_name)
-        DO UPDATE SET rating = EXCLUDED.rating;`
+        ON CONFLICT (image)
+        DO UPDATE SET elo = EXCLUDED.elo;`
+
+	getTableRatingsQuery = `
+		SELECT image, elo FROM ratings;`
 )
 
 type ProjectRepository struct {
@@ -58,7 +57,10 @@ func NewProjectRepository(db *sql.DB) *ProjectRepository {
 }
 
 func (r *ProjectRepository) GetAllTableRatings(ctx context.Context) ([]RatingsModel, error) {
-	rows, err := r.DB.QueryContext(ctx, "SELECT image_name, rating FROM ratings")
+	rows, err := r.DB.QueryContext(
+		ctx,
+		getTableRatingsQuery,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -80,8 +82,6 @@ func (r *ProjectRepository) InsertTableVotes(ctx context.Context, votesModel *Vo
 		ctx,
 		insertTableVotesQuery,
 		votesModel.UserName,
-		votesModel.ImageA,
-		votesModel.ImageB,
 		votesModel.ImageWinner,
 		votesModel.ImageLoser,
 		votesModel.EloWinnerPrevious,
