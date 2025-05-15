@@ -7,7 +7,7 @@ export async function initIntroForm() {
   form.onsubmit = async e => {
     e.preventDefault();
 
-    const name = input.value.trim().toLowerCase();
+    const name = input.value;
     const existingNames = await fetchExistingNames();
     if (existingNames.includes(name)) {
       return alert('This name has been taken');
