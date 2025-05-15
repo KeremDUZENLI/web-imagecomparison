@@ -1,8 +1,8 @@
 import { MatchSession }       from './core/matchSession.js';
 import { loadImages }         from './infrastructure/loadImages.js';
 import { postVote }           from './infrastructure/postVote.js';
-import { showPair }           from './ui/showPair.js';
 import { initDOM }            from './ui/initDOM.js'
+import { showPair }           from './ui/showPair.js';
 
 let dom, username, images, session;
 const MIN_VOTES = 10;
@@ -54,7 +54,7 @@ function loadNext() {
 }
 
 function finishSession() {
-  dom.container.innerHTML = '<h2>Thanks! You’ve finished all votes.</h2>';
+  dom.container.innerHTML = '<h2>Thanks! You have finished all votes.</h2>';
   dom.progress.textContent = '';
   dom.btnA.disabled = dom.btnB.disabled = true;
   dom.btnFinish.disabled = true;

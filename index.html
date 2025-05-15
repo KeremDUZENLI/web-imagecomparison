@@ -16,21 +16,7 @@
     <button type="submit">Start the Survey</button>
   </form>
 
-  <script type="module">
-    import { fetchExistingNames, validateName } from './js/infrastructure/fetchExistingNames.js';
-
-    document.getElementById('introForm').onsubmit = async e => {
-      e.preventDefault();
-      const name = document.getElementById('username').value.trim();
-
-      if (!validateName(name, await fetchExistingNames())) {
-        return alert('This name has been taken');
-      }
-
-      sessionStorage.setItem('surveyUser', name);
-      location.href = 'compare.html';
-    };
-  </script>
+  <script type="module" src="js/index.js"></script>
 
   <footer><small>&copy; Developed by Kerem Duzenli</small></footer>
 
