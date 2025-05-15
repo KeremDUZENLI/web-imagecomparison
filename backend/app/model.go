@@ -5,7 +5,7 @@ import (
 )
 
 type VotesModel struct {
-	UserName          string    `json:"userName"`
+	Username          string    `json:"username"`
 	ImageWinner       string    `json:"imageWinner"`
 	ImageLoser        string    `json:"imageLoser"`
 	EloWinnerPrevious int       `json:"eloWinnerPrevious"`
@@ -16,7 +16,7 @@ type VotesModel struct {
 }
 
 type VotesDTO struct {
-	UserName    string `json:"userName"`
+	Username    string `json:"username"`
 	ImageWinner string `json:"imageWinner"`
 	ImageLoser  string `json:"imageLoser"`
 }

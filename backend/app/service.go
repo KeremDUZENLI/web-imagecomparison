@@ -7,7 +7,7 @@ import (
 )
 
 type ProjectService interface {
-	GetAllUserNames(ctx context.Context) ([]string, error)
+	GetAllUsernames(ctx context.Context) ([]string, error)
 	GetAllRatings(ctx context.Context) ([]RatingsModel, error)
 	PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error)
 }
@@ -20,8 +20,8 @@ func NewProjectService(repo ProjectRepository) ProjectService {
 	return &projectService{repository: repo}
 }
 
-func (ps *projectService) GetAllUserNames(ctx context.Context) ([]string, error) {
-	return ps.repository.GetAllUserNames(ctx)
+func (ps *projectService) GetAllUsernames(ctx context.Context) ([]string, error) {
+	return ps.repository.GetAllUsernames(ctx)
 }
 
 func (ps *projectService) GetAllRatings(ctx context.Context) ([]RatingsModel, error) {
@@ -52,7 +52,7 @@ func (ps *projectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesMo
 	delta := int(math.Round(env.K_FACTOR * (1.0 - ea)))
 
 	vote := &VotesModel{
-		UserName:          dto.UserName,
+		Username:          dto.Username,
 		ImageWinner:       dto.ImageWinner,
 		ImageLoser:        dto.ImageLoser,
 		EloWinnerPrevious: prevW,

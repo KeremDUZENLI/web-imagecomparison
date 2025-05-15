@@ -8,7 +8,7 @@ import (
 const (
 	createTableVotesQuery = `
 		CREATE TABLE IF NOT EXISTS votes (
-			user_name 			 TEXT,
+			username 			 TEXT,
 			image_winner 		 TEXT,
 			image_loser 		 TEXT,
 			elo_winner_previous  INTEGER,
@@ -26,7 +26,7 @@ const (
 
 	insertTableVotesQuery = `
 		INSERT INTO votes (
-			user_name,
+			username,
 			image_winner,
 			image_loser,
 			elo_winner_previous,
@@ -44,14 +44,14 @@ const (
         DO UPDATE SET elo = EXCLUDED.elo;`
 
 	getDistinctUsersQuery = `
-		SELECT DISTINCT user_name FROM votes;`
+		SELECT DISTINCT username FROM votes;`
 
 	getTableRatingsQuery = `
 		SELECT image, elo FROM ratings;`
 )
 
 type ProjectRepository interface {
-	GetAllUserNames(ctx context.Context) ([]string, error)
+	GetAllUsernames(ctx context.Context) ([]string, error)
 	GetAllTableRatings(ctx context.Context) ([]RatingsModel, error)
 	InsertTableVotes(ctx context.Context, votesModel *VotesModel) error
 	InsertTableRatings(ctx context.Context, ratings ...RatingsModel) error
@@ -65,7 +65,7 @@ func NewProjectRepository(db *sql.DB) ProjectRepository {
 	return &projectRepository{sqlDatabase: db}
 }
 
-func (r *projectRepository) GetAllUserNames(ctx context.Context) ([]string, error) {
+func (r *projectRepository) GetAllUsernames(ctx context.Context) ([]string, error) {
 	rows, err := r.sqlDatabase.QueryContext(ctx, getDistinctUsersQuery)
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func (r *projectRepository) InsertTableVotes(ctx context.Context, votesModel *Vo
 	return r.sqlDatabase.QueryRowContext(
 		ctx,
 		insertTableVotesQuery,
-		votesModel.UserName,
+		votesModel.Username,
 		votesModel.ImageWinner,
 		votesModel.ImageLoser,
 		votesModel.EloWinnerPrevious,
