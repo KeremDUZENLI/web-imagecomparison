@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VR Comparison Survey – Compare Images</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <h1>Which scene looks more realistic?</h1>
+
+  <div id="imageContainer">
+    <figure>
+      <img id="imgA" alt="Option A" loading="lazy">
+      <figcaption>Option A</figcaption>
+      <button id="buttonChooseA">Choose A</button>
+    </figure>
+    <figure>
+      <img id="imgB" alt="Option B" loading="lazy">
+      <figcaption>Option B</figcaption>
+      <button id="buttonChooseB">Choose B</button>
+    </figure>
+  </div>
+
+  <button id="buttonFinish" hidden>Finish</button>
+  <div id="progress" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js"></script>
+
+  <footer><small>&copy; Developed by Kerem Duzenli</small></footer>
+  
+</body>
+
+</html>
