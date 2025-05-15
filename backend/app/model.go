@@ -1,6 +1,8 @@
 package app
 
 import (
+	"encoding/json"
+	"strings"
 	"time"
 )
 
@@ -15,13 +17,25 @@ type VotesModel struct {
 	CreatedAt         time.Time `json:"createdAt,omitempty"`
 }
 
+type RatingsModel struct {
+	Image string `json:"image"`
+	Elo   int    `json:"elo"`
+}
+
 type VotesDTO struct {
 	Username    string `json:"username"`
 	ImageWinner string `json:"imageWinner"`
 	ImageLoser  string `json:"imageLoser"`
 }
 
-type RatingsModel struct {
-	Image string `json:"image"`
-	Elo   int    `json:"elo"`
+func (v *VotesDTO) UnmarshalJSON(raw []byte) error {
+	type alias VotesDTO
+	aux := struct{ *alias }{alias: (*alias)(v)}
+
+	if err := json.Unmarshal(raw, &aux); err != nil {
+		return err
+	}
+
+	v.Username = strings.ToLower(strings.TrimSpace(v.Username))
+	return nil
 }
