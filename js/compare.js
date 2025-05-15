@@ -16,7 +16,7 @@ async function bootstrap() {
   }
 
   try {
-    images = await loadImages();
+    images  = await loadImages();
     session = new MatchSession(images, MIN_VOTES);
   } catch (e) {
     console.error(e);
@@ -24,15 +24,15 @@ async function bootstrap() {
     return;
   }
 
-  dom.btnA.onclick = () => handleChoice(0);
-  dom.btnB.onclick = () => handleChoice(1);
+  dom.btnA.onclick      = () => handleChoice(0);
+  dom.btnB.onclick      = () => handleChoice(1);
   dom.btnFinish.onclick = finishSession;
 
   loadNext();
 }
 
 async function handleChoice(idx) {
-  const pair = session.currentPair;
+  const pair   = session.currentPair;
   const winner = pair[idx];
   const loser  = pair[1 - idx];
 
@@ -45,19 +45,19 @@ function loadNext() {
   const canFinish = session.canFinish();
 
   dom.btnFinish.style.display = canFinish ? 'inline-block' : 'none';
-  dom.progress.textContent = canFinish
-    ? `You've reached ${MIN_VOTES} votes — you may Finish or keep voting.`
-    : `Match ${session.matchesDone + 1} of ${MIN_VOTES}`;
+  dom.progress.textContent    = canFinish ? `You've reached ${MIN_VOTES} votes — you may Finish or keep voting.` : `Match ${session.matchesDone + 1} of ${MIN_VOTES}`;
 
   const pair = session.nextPair();
   showPair(dom, pair, session.matchesDone, MIN_VOTES);
 }
 
 function finishSession() {
-  dom.container.innerHTML = '<h2>Thanks! You have finished all votes.</h2>';
+  dom.container.innerHTML  = '<h2>Thanks! You have finished all votes.</h2>';
   dom.progress.textContent = '';
+
   dom.btnA.disabled = dom.btnB.disabled = true;
-  dom.btnFinish.disabled = true;
+  dom.btnFinish.disabled                = true;
 }
 
 window.addEventListener('load', bootstrap);
+window.onbeforeunload = function () {if (session && !session.canFinish()) { return '' }};
