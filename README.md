@@ -1,28 +1,31 @@
-# web-imagecomparison
-Image Comparison Algorithm
+# Image Comparison Website
 https://keremduzenli.github.io/web-imagecomparison/
 
-## docker
-docker-compose build --no-cache
-docker-compose up
-docker ps
 
-## npm
-cd .\backend\
-npm install
-npm start
+# BACKEND SUMMARY
+```
+    Database -> Run in Docker Container (PostgreSQL)
+    Backend  -> Run Locally with Golang
+```
 
+## DOCKER (PostgreSQL)
+```
+    docker-compose build --no-cache
+    docker-compose up
+    docker ps
+```
 
-# Setup Summary
-✅ Backend    : Run locally with node index.js
-✅ PostgreSQL : Run in Docker container
-❌ Container  : No Docker for backend
-
-## Clean Archicture (Backend)
-/common     -> Commons and Tools
-/controller -> Handles HTTP logic
-/database   -> PostgreSQL
-/model      -> Data structures
-/repository -> DB operations
-/service    -> Business logic
-/main.go    -> App setup and router
+## BACKEND (Onion Architecture)
+```
+    /app/controller   -> Handles HTTP logic
+    /app/middleware   -> HTTP Logs
+    /app/model        -> Data structures
+    /app/repository   -> DB operations
+    /app/router       -> Sets routes
+    /app/service      -> Business logic
+    /database/connect -> DB Connection String
+    /env/constants    -> Default Rating & KFactor
+    /env/env.go       -> Load .env Variables
+    /utils/shutdown   -> Shutdows Router Gracefully
+    /main.go          -> App setup and router
+```
