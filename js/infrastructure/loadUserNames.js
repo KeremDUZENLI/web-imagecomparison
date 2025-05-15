@@ -1,4 +1,4 @@
-export async function loadUserNames(apiEndpoint = '/api/users') {
+export async function loadUsernames(apiEndpoint = '/api/users') {
   let existing = [];
   try {
     const res = await fetch(apiEndpoint);

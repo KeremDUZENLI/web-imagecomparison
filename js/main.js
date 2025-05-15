@@ -1,18 +1,18 @@
 import { MatchSession } from './core/matchSession.js';
 import { loadImages }   from './infrastructure/loadImages.js';
-import { loadUserNames } from './infrastructure/loadUserNames.js';
+import { loadUsernames } from './infrastructure/loadUsernames.js';
 import { postVote }     from './infrastructure/postVote.js';
 import { showPair }     from './ui/showPair.js';
 import { initDOM }      from './ui/initDOM.js'
 
-let dom, userName, images, session;
+let dom, username, images, session;
 const MIN_VOTES = 10;
 
 async function bootstrap() {
   dom = initDOM();
 
-  userName = await loadUserNames();
-  if (!userName) {
+  username = await loadUsernames();
+  if (!username) {
     return location.reload();
   }
 
@@ -37,7 +37,7 @@ async function handleChoice(idx) {
   const winner = pair[idx];
   const loser  = pair[1 - idx];
 
-  await postVote({ userName, imageWinner: winner, imageLoser: loser });
+  await postVote({ username, imageWinner: winner, imageLoser: loser });
   session.applyVote();
   loadNext();
 }
