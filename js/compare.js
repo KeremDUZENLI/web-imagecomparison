@@ -7,27 +7,28 @@ import { showPair }           from './ui/showPair.js';
 let dom, username, images, session;
 const MIN_VOTES = 10;
 
-async function bootstrap() {
+async function setup() {
   dom = initDOM();
-
-  username = sessionStorage.getItem('surveyUser');
-  if (!username) {
-    return location.href = 'index.html';
-  }
-
-  try {
-    images  = await loadImages();
-    session = new MatchSession(images, MIN_VOTES);
-  } catch (e) {
-    console.error(e);
-    alert('Could not load images');
-    return;
-  }
 
   dom.btnA.onclick      = () => handleChoice(0);
   dom.btnB.onclick      = () => handleChoice(1);
   dom.btnFinish.onclick = finishSession;
 
+  window.addEventListener('beforeunload', unloadHandler);
+  window.addEventListener('pageshow', pageshowHandler);
+}
+
+async function render() {
+  const currentUser = sessionStorage.getItem('surveyUser');
+  if (!currentUser) return location.href = 'index.html';
+  username = currentUser;
+  
+  if (!images) {
+    images  = await loadImages();
+    session = new MatchSession(images, MIN_VOTES);
+  }
+  
+  session.matchesDone = initVoteState();
   loadNext();
 }
 
@@ -37,8 +38,28 @@ async function handleChoice(idx) {
   const loser  = pair[1 - idx];
 
   await postVote({ username, imageWinner: winner, imageLoser: loser });
+
   session.applyVote();
+  sessionStorage.setItem('votesCount', session.matchesDone);
+
   loadNext();
+}
+
+function initVoteState() {
+  const user = sessionStorage.getItem('surveyUser');  
+  const last = sessionStorage.getItem('votesUser'); 
+
+  if (last !== user) {
+    sessionStorage.setItem('votesCount', '0');  
+    sessionStorage.setItem('votesUser', user);  
+  }
+  
+  return parseInt(sessionStorage.getItem('votesCount') || '0', 10);  
+}
+
+function finishSession() {
+  sessionStorage.setItem('votesCount', session.matchesDone);
+  location.href = 'finish.html';
 }
 
 function loadNext() {
@@ -51,13 +72,23 @@ function loadNext() {
   showPair(dom, pair, session.matchesDone, MIN_VOTES);
 }
 
-function finishSession() {
-  dom.container.innerHTML  = '<h2>Thanks! You have finished all votes.</h2>';
-  dom.progress.textContent = '';
-
-  dom.btnA.disabled = dom.btnB.disabled = true;
-  dom.btnFinish.disabled                = true;
+function unloadHandler(e) {
+  if (session && !session.canFinish()) {
+    const warning = 'You have unfinished votes — are you sure you want to leave?';
+    e.preventDefault();
+    e.returnValue = warning;
+    return warning;
+  }
 }
 
-window.addEventListener('load', bootstrap);
-window.onbeforeunload = function () {if (session && !session.canFinish()) { return '' }};
+function pageshowHandler(event) {
+  const nav = performance.getEntriesByType("navigation")[0]?.type;
+  if (event.persisted || nav === "back_forward") {
+    render();
+  }
+}
+
+window.addEventListener('load', async () => {
+  await setup();
+  await render();
+});
