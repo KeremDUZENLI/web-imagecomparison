@@ -14,31 +14,32 @@ import (
 func main() {
 	cfg, err := env.LoadConfig()
 	if err != nil {
-		log.Fatalf("\t\u274c Error loading config: %v", err)
+		log.Fatalf("Error loading config: %v", err)
 	}
 
 	db, err := database.ConnectDB(cfg)
 	if err != nil {
-		log.Fatalf("\t\u274c Error connecting to database: %v", err)
+		log.Fatalf("Error connecting to DB: %v", err)
 	}
 	defer db.Close()
 
 	if err := app.InitTableVotes(db); err != nil {
-		log.Fatalf("\t\u274c Error initializing votes table: %v", err)
+		log.Fatalf("Error initializing votes table: %v", err)
 	}
 	if err := app.InitTableRatings(db); err != nil {
-		log.Fatalf("\t\u274c Error initializing ratings table: %v", err)
+		log.Fatalf("Error initializing ratings table: %v", err)
 	}
 
 	repo := app.NewProjectRepository(db)
-	service := app.NewProjectService(repo)
-	controller := app.NewProjectController(service)
-	router := app.NewRouter(controller)
+	svc := app.NewProjectService(repo)
+	ctrl := app.NewProjectController(svc)
 
-	server := &http.Server{
+	logCfg := app.MiddlewareConfig{EnableLogging: true}
+	router := app.NewRouter(ctrl, logCfg)
+
+	srv := &http.Server{
 		Addr:    ":" + cfg.ServerPort,
 		Handler: router,
 	}
-
-	utils.StartServerWithGracefulShutdown(server, 5*time.Second)
+	utils.StartServerWithGracefulShutdown(srv, 5*time.Second)
 }
