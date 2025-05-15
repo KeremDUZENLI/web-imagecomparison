@@ -19,6 +19,9 @@ func (pc *ProjectController) HandleUsers(w http.ResponseWriter, r *http.Request)
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not fetch users"})
 		return
 	}
+	if users == nil {
+		users = []string{}
+	}
 	respondJSON(w, http.StatusOK, users)
 }
 

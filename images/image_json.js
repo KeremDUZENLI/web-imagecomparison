@@ -1,8 +1,8 @@
 const fs   = require('fs').promises;
 const path = require('path');
 
-const imagesDir  = path.join(__dirname, '../docs/images');
-const outputFile = path.join(__dirname, '../docs/images.json');
+const imagesDir  = path.join(__dirname, '../images');
+const outputFile = path.join(__dirname, '../images/images.json');
 
 async function createImageJson() {
   const files      = await fs.readdir(imagesDir);

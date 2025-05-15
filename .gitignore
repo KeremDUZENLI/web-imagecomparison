@@ -1,36 +1,28 @@
-# ========================
-# Environment & Secrets
-# ========================
-/backend/.env
+# Environment and configuration files
+*.env
+*.spec
+docker-compose.override.yml
 
-# ========================
-# Dependency Folders
-# ========================
-/backend/node_modules/
-
-# ========================
-# Build & Logs
-# ========================
+# Logs and system files
 *.log
-
-# ========================
-# OS & Editor Files
-# ========================
-# macOS
 .DS_Store
-# Windows
 Thumbs.db
-# VSCode & JetBrains
+
+# IDE and editor directories
 .vscode/
 .idea/
 
-# ========================
-# Python Cache (helper/)
-# ========================
-/helper/__pycache__/
-/helper/*.py[cod]
+# Python cache and build artifacts
+__pycache__/
+.py_cache/
+*.py[cod]
 
-# ========================
-# Docker Overrides
-# ========================
-docker-compose.override.yml
+# Virtual environments and build directories
+.venv/
+venv/
+env/
+build/
+dist/
+
+# Project-specific directories
+helpers/

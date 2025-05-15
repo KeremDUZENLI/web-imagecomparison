@@ -1,11 +1,11 @@
-export async function loadUserName(apiEndpoint = '/api/users') {
+export async function loadUserNames(apiEndpoint = '/api/users') {
   let existing = [];
   try {
     const res = await fetch(apiEndpoint);
     if (!res.ok) throw new Error();
     existing = (await res.json()).map(u => u.toLowerCase());
   } catch {
-    alert('Initialization failed.');
+    alert('Could not load existing usernames');
     return null;
   }
 
@@ -17,7 +17,7 @@ export async function loadUserName(apiEndpoint = '/api/users') {
     }
     const name = raw.trim();
     if (existing.includes(name.toLowerCase())) {
-      alert('That name is already taken. Please choose another.');
+      alert('That name is already taken');
       continue;
     }
     existing.push(name.toLowerCase());

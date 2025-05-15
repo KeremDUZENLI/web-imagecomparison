@@ -1,6 +1,6 @@
 import { MatchSession } from './core/matchSession.js';
 import { loadImages }   from './infrastructure/loadImages.js';
-import { loadUserName } from './infrastructure/loadUserName.js';
+import { loadUserNames } from './infrastructure/loadUserNames.js';
 import { postVote }     from './infrastructure/postVote.js';
 import { showPair }     from './ui/showPair.js';
 import { initDOM }      from './ui/initDOM.js'
@@ -11,7 +11,7 @@ const MIN_VOTES = 10;
 async function bootstrap() {
   dom = initDOM();
 
-  userName = await loadUserName();
+  userName = await loadUserNames();
   if (!userName) {
     return location.reload();
   }
@@ -21,7 +21,7 @@ async function bootstrap() {
     session = new MatchSession(images, MIN_VOTES);
   } catch (e) {
     console.error(e);
-    alert('Initialization failed.');
+    alert('Could not load images');
     return;
   }
 
