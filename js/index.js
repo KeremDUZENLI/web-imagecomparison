@@ -1,4 +1,4 @@
-import { fetchExistingNames, validateName } from './infrastructure/fetchExistingNames.js';
+import { fetchExistingNames } from './infrastructure/fetchExistingNames.js';
 
 export async function initIntroForm() {
   const form = document.getElementById('introForm');
@@ -6,10 +6,10 @@ export async function initIntroForm() {
 
   form.onsubmit = async e => {
     e.preventDefault();
-    const name = input.value.trim();
 
-    const existing = await fetchExistingNames();
-    if (!validateName(name, existing)) {
+    const name = input.value.trim().toLowerCase();
+    const existingNames = await fetchExistingNames();
+    if (existingNames.includes(name)) {
       return alert('This name has been taken');
     }
 
