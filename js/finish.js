@@ -1,20 +1,44 @@
-const username = sessionStorage.getItem('surveyUser') || 'Guest';
-const votes    = sessionStorage.getItem('votesCount') || '0';
+import { fetchRatings }    from './infrastructure/fetchRatings.js';
+import { setText }         from './ui/setText.js';
+import { showLeaderboard } from './ui/showLeaderboard.js';
 
-document.getElementById('thankyou').textContent = `Thank you, ${username}!`;
-document.getElementById('voteCount').textContent = `You made ${votes} choice${votes === '1' ? '' : 's'}.`;
 
-document.getElementById('btnRestart').onclick = () => {
-  sessionStorage.removeItem('surveyUser');
-  sessionStorage.removeItem('votesUser');
-  sessionStorage.removeItem('votesCount');
-  location.href = 'index.html';
-};
+window.addEventListener('DOMContentLoaded', () => {
+  const username       = sessionStorage.getItem('surveyUser') || 'Guest';
+  const votes          = sessionStorage.getItem('votesCount')   || '0';
+  const btnViewBoard   = document.getElementById('btnViewBoard');
+  const containerBoard = document.getElementById('containerBoard');
+  const TOPN           = 10;
 
-document.getElementById('btnContinue').onclick = () => {
-  location.href = 'compare.html';
-};
+  setText('thankyou',   `Thank you, ${username}!`);
+  setText('voteCount',  `You made ${votes} choice${votes === '1' ? '' : 's'}.`);
 
-document.getElementById('btnLeaderboard').onclick = () => {
-  location.href = 'leaderboard.html';
-};
+  document.getElementById('btnRestart').onclick = () => {
+    sessionStorage.clear();
+    location.href = 'index.html';
+  };
+
+  document.getElementById('btnContinue').onclick = () => {
+    location.href = 'compare.html';
+  };
+
+  containerBoard.style.display = 'none';
+  btnViewBoard.onclick = async () => {
+    const isHidden = containerBoard.style.display === 'none';
+
+    if (isHidden) {
+      containerBoard.style.display = 'block';
+      btnViewBoard.textContent = 'Hide Leaderboard';
+
+      try {
+        const topN = await fetchRatings(TOPN);
+        showLeaderboard(containerBoard, topN);
+      } catch {
+        containerBoard.textContent = 'Could not load Leaderboard';
+      }
+    } else {
+      containerBoard.style.display = 'none';
+      btnViewBoard.textContent = 'View Leaderboard';
+    }
+  };
+});

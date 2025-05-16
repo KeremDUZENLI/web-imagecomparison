@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-var suffixes = []string{"go"}
-var ignore = []string{"helpers"}
+var suffixes = []string{"js"}
+var ignore = []string{"helpers", "images"}
 
 func main() {
 	if err := walkTree(".", suffixes, ignore); err != nil {
