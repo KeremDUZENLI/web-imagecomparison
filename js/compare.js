@@ -1,13 +1,13 @@
 import { MatchSession }   from './core/matchSession.js';
+import { MIN_VOTES }      from './env/contants.js';
 import { postVote }       from './infrastructure/postVote.js';
 import { initCompareDOM } from './ui/initCompareDOM.js'
 import { loadImages }     from './ui/loadImages.js';
 import { showPair }       from './ui/showPair.js';
 
-let dom, username, images, session;
-const MIN_VOTES = 10;
+let dom, currentUser, images, session;
 
-async function setup() {
+async function initCompare() {
   dom = initCompareDOM();
 
   dom.btnA.onclick      = () => handleChoice(0);
@@ -18,10 +18,10 @@ async function setup() {
   window.addEventListener('pageshow', pageshowHandler);
 }
 
-async function render() {
-  const currentUser = sessionStorage.getItem('surveyUser');
-  if (!currentUser) return location.href = 'index.html';
-  username = currentUser;
+async function renderCompare() {
+  const username = sessionStorage.getItem('surveyUser');
+  if (!username) return location.href = 'index.html';
+  currentUser = username;
   
   if (!images) {
     images  = await loadImages();
@@ -37,12 +37,33 @@ async function handleChoice(idx) {
   const winner = pair[idx];
   const loser  = pair[1 - idx];
 
-  await postVote({ username, imageWinner: winner, imageLoser: loser });
+  await postVote({ username: currentUser, imageWinner: winner, imageLoser: loser });
 
   session.applyVote();
   sessionStorage.setItem('votesCount', session.matchesDone);
 
   loadNext();
+}
+
+function finishSession() {
+  sessionStorage.setItem('votesCount', session.matchesDone);
+  location.href = 'finish.html';
+}
+
+function unloadHandler(e) {
+  if (session && !session.canFinish()) {
+    const warning = 'You have unfinished votes — are you sure you want to leave?';
+    e.preventDefault();
+    e.returnValue = warning;
+    return warning;
+  }
+}
+
+function pageshowHandler(event) {
+  const nav = performance.getEntriesByType("navigation")[0]?.type;
+  if (event.persisted || nav === "back_forward") {
+    renderCompare();
+  }
 }
 
 function initVoteState() {
@@ -58,11 +79,6 @@ function initVoteState() {
   return isNaN(count) ? 0 : count; 
 }
 
-function finishSession() {
-  sessionStorage.setItem('votesCount', session.matchesDone);
-  location.href = 'finish.html';
-}
-
 function loadNext() {
   const canFinish = session.canFinish();
 
@@ -73,23 +89,7 @@ function loadNext() {
   showPair(dom, pair, session.matchesDone, MIN_VOTES);
 }
 
-function unloadHandler(e) {
-  if (session && !session.canFinish()) {
-    const warning = 'You have unfinished votes — are you sure you want to leave?';
-    e.preventDefault();
-    e.returnValue = warning;
-    return warning;
-  }
-}
-
-function pageshowHandler(event) {
-  const nav = performance.getEntriesByType("navigation")[0]?.type;
-  if (event.persisted || nav === "back_forward") {
-    render();
-  }
-}
-
 window.addEventListener('DOMContentLoaded', async () => {
-  await setup();
-  await render();
+  await initCompare();
+  await renderCompare();
 });

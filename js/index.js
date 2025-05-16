@@ -18,4 +18,4 @@ export async function initIntroForm() {
   };
 }
 
-window.addEventListener('load', initIntroForm);
+window.addEventListener('DOMContentLoaded', initIntroForm);
