@@ -1,4 +1,4 @@
-import { fetchUsernames } from './infrastructure/fetchUsernames.js';
+import { getUsernames } from './infrastructure/getUsernames.js';
 
 export async function initIntroForm() {
   const form = document.getElementById('introForm');
@@ -8,7 +8,7 @@ export async function initIntroForm() {
     e.preventDefault();
 
     const name = input.value.trim().toLowerCase();
-    const existingNames = await fetchUsernames();
+    const existingNames = await getUsernames();
     if (existingNames.includes(name)) {
       return alert('This name has been taken');
     }

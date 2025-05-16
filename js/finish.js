@@ -1,4 +1,4 @@
-import { fetchRatings }    from './infrastructure/fetchRatings.js';
+import { getRatings }      from './infrastructure/getRatings.js';
 import { setText }         from './ui/setText.js';
 import { showLeaderboard } from './ui/showLeaderboard.js';
 
@@ -31,7 +31,7 @@ window.addEventListener('DOMContentLoaded', () => {
       btnViewBoard.textContent = 'Hide Leaderboard';
 
       try {
-        const topN = await fetchRatings(TOPN);
+        const topN = await getRatings(TOPN);
         showLeaderboard(containerBoard, topN);
       } catch {
         containerBoard.textContent = 'Could not load Leaderboard';

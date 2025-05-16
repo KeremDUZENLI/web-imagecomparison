@@ -4,18 +4,25 @@ export class MatchSession {
     this.minVotes    = minVotes;
     this.matchesDone = 0;
     this.currentPair = null;
+    this.lastPair    = [];
   }
 
   nextPair() {
     const count = this.images.length;
-    let first   = Math.floor(Math.random() * count);
-    let second  = Math.floor(Math.random() * count);
+    let first, second;
 
-    while (second === first) {
-      second = Math.floor(Math.random() * count);
-    }
+    do {
+      first = Math.floor(Math.random() * count);
+      do {
+        second = Math.floor(Math.random() * count);
+      } while (second === first);
+    } while (
+      this.lastPair.includes(this.images[first]) ||
+      this.lastPair.includes(this.images[second])
+    );
 
     this.currentPair = [this.images[first], this.images[second]];
+    this.lastPair = this.currentPair;
     return this.currentPair;
   }
 

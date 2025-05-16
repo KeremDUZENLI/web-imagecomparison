@@ -1,4 +1,4 @@
-export function getCompareDOM() {
+export function initCompareDOM() {
   return {
     imgA:      document.getElementById('imgA'),
     imgB:      document.getElementById('imgB'),

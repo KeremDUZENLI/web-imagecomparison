@@ -1,14 +1,14 @@
-import { MatchSession }  from './core/matchSession.js';
-import { postVote }      from './infrastructure/postVote.js';
-import { getCompareDOM } from './ui/getCompareDOM.js'
-import { loadImages }    from './ui/loadImages.js';
-import { showPair }      from './ui/showPair.js';
+import { MatchSession }   from './core/matchSession.js';
+import { postVote }       from './infrastructure/postVote.js';
+import { initCompareDOM } from './ui/initCompareDOM.js'
+import { loadImages }     from './ui/loadImages.js';
+import { showPair }       from './ui/showPair.js';
 
 let dom, username, images, session;
 const MIN_VOTES = 10;
 
 async function setup() {
-  dom = getCompareDOM();
+  dom = initCompareDOM();
 
   dom.btnA.onclick      = () => handleChoice(0);
   dom.btnB.onclick      = () => handleChoice(1);
@@ -46,15 +46,16 @@ async function handleChoice(idx) {
 }
 
 function initVoteState() {
-  const user = sessionStorage.getItem('surveyUser');  
-  const last = sessionStorage.getItem('votesUser'); 
+  const user = sessionStorage.getItem('surveyUser');
+  const last = sessionStorage.getItem('votesUser');
 
   if (last !== user) {
     sessionStorage.setItem('votesCount', '0');  
     sessionStorage.setItem('votesUser', user);  
   }
   
-  return parseInt(sessionStorage.getItem('votesCount') || '0', 10);  
+  const count = Number(sessionStorage.getItem('votesCount'));
+  return isNaN(count) ? 0 : count; 
 }
 
 function finishSession() {
@@ -88,7 +89,7 @@ function pageshowHandler(event) {
   }
 }
 
-window.addEventListener('load', async () => {
+window.addEventListener('DOMContentLoaded', async () => {
   await setup();
   await render();
 });
