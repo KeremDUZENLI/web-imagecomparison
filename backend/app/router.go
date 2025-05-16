@@ -8,11 +8,13 @@ func NewRouter(pc *ProjectController, cfg MiddlewareConfig) http.Handler {
 	apiMux := http.NewServeMux()
 	registerAPIRoutes(apiMux, pc)
 
-	handler := LogRequest(cfg)(apiMux)
-	router := http.NewServeMux()
-	router.Handle("/api/", http.StripPrefix("/api", handler))
+	logHandler := LogRequest(cfg)(apiMux)
+	cacheHandler := CacheControl(cfg)(http.FileServer(http.Dir("../")))
 
-	router.Handle("/", http.FileServer(http.Dir("../")))
+	router := http.NewServeMux()
+	router.Handle("/api/", http.StripPrefix("/api", logHandler))
+	router.Handle("/", cacheHandler)
+
 	return router
 }
 

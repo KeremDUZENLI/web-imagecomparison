@@ -12,34 +12,38 @@ import (
 )
 
 func main() {
-	cfg, err := env.LoadConfig()
+	envCfg, err := env.LoadConfig()
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
 	}
 
-	db, err := database.ConnectDB(cfg)
+	sqlDB, err := database.ConnectDB(envCfg)
 	if err != nil {
 		log.Fatalf("Error connecting to DB: %v", err)
 	}
-	defer db.Close()
+	defer sqlDB.Close()
 
-	if err := app.InitTableVotes(db); err != nil {
+	if err := app.InitTableVotes(sqlDB); err != nil {
 		log.Fatalf("Error initializing votes table: %v", err)
 	}
-	if err := app.InitTableRatings(db); err != nil {
+	if err := app.InitTableRatings(sqlDB); err != nil {
 		log.Fatalf("Error initializing ratings table: %v", err)
 	}
 
-	repo := app.NewProjectRepository(db)
-	svc := app.NewProjectService(repo)
-	ctrl := app.NewProjectController(svc)
+	repository := app.NewProjectRepository(sqlDB)
+	service := app.NewProjectService(repository)
+	controller := app.NewProjectController(service)
 
-	logCfg := app.MiddlewareConfig{EnableLogging: true}
-	router := app.NewRouter(ctrl, logCfg)
+	middlewareCfg := app.MiddlewareConfig{
+		EnableLogging:      true,
+		DisableStaticCache: true,
+	}
 
-	srv := &http.Server{
-		Addr:    ":" + cfg.ServerPort,
+	router := app.NewRouter(controller, middlewareCfg)
+
+	server := &http.Server{
+		Addr:    ":" + envCfg.ServerPort,
 		Handler: router,
 	}
-	utils.StartServerWithGracefulShutdown(srv, 5*time.Second)
+	utils.StartServerWithGracefulShutdown(server, 5*time.Second)
 }

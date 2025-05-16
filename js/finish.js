@@ -16,5 +16,5 @@ document.getElementById('btnContinue').onclick = () => {
 };
 
 document.getElementById('btnLeaderboard').onclick = () => {
-  location.href = '/api/ratings';
+  location.href = 'leaderboard.html';
 };
