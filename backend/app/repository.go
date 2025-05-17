@@ -37,7 +37,7 @@ const (
 		);`
 
 	getDistinctUsersQuery = `
-		SELECT DISTINCT username FROM votes;`
+		SELECT DISTINCT username FROM surveys;`
 
 	getRatingsQuery = `
 		SELECT image, elo, created_at, updated_at FROM ratings;`
