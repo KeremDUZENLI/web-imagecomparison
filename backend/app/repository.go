@@ -6,7 +6,17 @@ import (
 )
 
 const (
-	createTableVotesQuery = `
+	CreateTableSurveysQuery = `
+		CREATE TABLE IF NOT EXISTS surveys (
+			username         TEXT 		  PRIMARY KEY,
+			age              TEXT	 	  NOT NULL,
+			gender           TEXT 		  NOT NULL,
+			vr_experience    TEXT 		  NOT NULL,
+			domain_expertise TEXT 		  NOT NULL,
+			created_at    	 TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+		);`
+
+	CreateTableVotesQuery = `
 		CREATE TABLE IF NOT EXISTS votes (
 			username 			 TEXT,
 			image_winner 		 TEXT,
@@ -15,16 +25,35 @@ const (
 			elo_winner_new 		 INTEGER,
 			elo_loser_previous 	 INTEGER,
 			elo_loser_new 		 INTEGER,
-			created_at 			 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			created_at  		 TIMESTAMPTZ NOT NULL DEFAULT NOW()
 		);`
 
-	createTableRatingsQuery = `
+	CreateTableRatingsQuery = `
 		CREATE TABLE IF NOT EXISTS ratings (
-			image 	TEXT PRIMARY KEY,
-			elo     INTEGER NOT NULL
+			image       TEXT 		 PRIMARY KEY,
+			elo         INTEGER 	 NOT NULL,
+			created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+			updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 		);`
 
-	insertTableVotesQuery = `
+	getDistinctUsersQuery = `
+		SELECT DISTINCT username FROM votes;`
+
+	getRatingsQuery = `
+		SELECT image, elo, created_at, updated_at FROM ratings;`
+
+	insertSurveyQuery = `
+		INSERT INTO surveys (
+			username, 
+			age, 
+			gender, 
+			vr_experience, 
+			domain_expertise
+		)
+		VALUES($1,$2,$3,$4,$5)
+		ON CONFLICT (username) DO NOTHING;`
+
+	insertVoteQuery = `
 		INSERT INTO votes (
 			username,
 			image_winner,
@@ -37,24 +66,20 @@ const (
 		VALUES ($1,$2,$3,$4,$5,$6,$7)
 		RETURNING created_at;`
 
-	insertTableRatingsQuery = `
-		INSERT INTO ratings(image, elo)
-		VALUES ($1, $2)
-        ON CONFLICT (image)
-        DO UPDATE SET elo = EXCLUDED.elo;`
-
-	getDistinctUsersQuery = `
-		SELECT DISTINCT username FROM votes;`
-
-	getTableRatingsQuery = `
-		SELECT image, elo FROM ratings;`
+	insertRatingQuery = `
+		INSERT INTO ratings (image, elo)
+			VALUES ($1, $2)
+			ON CONFLICT (image) DO UPDATE SET 
+				elo = EXCLUDED.elo,
+				updated_at = NOW();`
 )
 
 type ProjectRepository interface {
-	GetAllUsernames(ctx context.Context) ([]string, error)
-	GetAllTableRatings(ctx context.Context) ([]RatingsModel, error)
-	InsertTableVotes(ctx context.Context, votesModel *VotesModel) error
-	InsertTableRatings(ctx context.Context, ratings ...RatingsModel) error
+	GetUsernames(ctx context.Context) ([]string, error)
+	GetRatings(ctx context.Context) ([]RatingsModel, error)
+	InsertSurvey(ctx context.Context, user SurveysModel) error
+	InsertVote(ctx context.Context, votesModel *VotesModel) error
+	InsertRating(ctx context.Context, ratings ...RatingsModel) error
 }
 
 type projectRepository struct {
@@ -65,7 +90,7 @@ func NewProjectRepository(db *sql.DB) ProjectRepository {
 	return &projectRepository{sqlDatabase: db}
 }
 
-func (r *projectRepository) GetAllUsernames(ctx context.Context) ([]string, error) {
+func (r *projectRepository) GetUsernames(ctx context.Context) ([]string, error) {
 	rows, err := r.sqlDatabase.QueryContext(ctx, getDistinctUsersQuery)
 	if err != nil {
 		return nil, err
@@ -83,11 +108,8 @@ func (r *projectRepository) GetAllUsernames(ctx context.Context) ([]string, erro
 	return users, nil
 }
 
-func (r *projectRepository) GetAllTableRatings(ctx context.Context) ([]RatingsModel, error) {
-	rows, err := r.sqlDatabase.QueryContext(
-		ctx,
-		getTableRatingsQuery,
-	)
+func (r *projectRepository) GetRatings(ctx context.Context) ([]RatingsModel, error) {
+	rows, err := r.sqlDatabase.QueryContext(ctx, getRatingsQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +118,7 @@ func (r *projectRepository) GetAllTableRatings(ctx context.Context) ([]RatingsMo
 	var out []RatingsModel
 	for rows.Next() {
 		var m RatingsModel
-		if err := rows.Scan(&m.Image, &m.Elo); err != nil {
+		if err := rows.Scan(&m.Image, &m.Elo, &m.CreatedAt, &m.UpdatedAt); err != nil {
 			return nil, err
 		}
 		out = append(out, m)
@@ -104,10 +126,23 @@ func (r *projectRepository) GetAllTableRatings(ctx context.Context) ([]RatingsMo
 	return out, nil
 }
 
-func (r *projectRepository) InsertTableVotes(ctx context.Context, votesModel *VotesModel) error {
+func (r *projectRepository) InsertSurvey(ctx context.Context, surveysModel SurveysModel) error {
+	_, err := r.sqlDatabase.ExecContext(
+		ctx,
+		insertSurveyQuery,
+		surveysModel.Username,
+		surveysModel.Age,
+		surveysModel.Gender,
+		surveysModel.VRExperience,
+		surveysModel.DomainExpertise,
+	)
+	return err
+}
+
+func (r *projectRepository) InsertVote(ctx context.Context, votesModel *VotesModel) error {
 	return r.sqlDatabase.QueryRowContext(
 		ctx,
-		insertTableVotesQuery,
+		insertVoteQuery,
 		votesModel.Username,
 		votesModel.ImageWinner,
 		votesModel.ImageLoser,
@@ -118,33 +153,23 @@ func (r *projectRepository) InsertTableVotes(ctx context.Context, votesModel *Vo
 	).Scan(&votesModel.CreatedAt)
 }
 
-func (r *projectRepository) InsertTableRatings(ctx context.Context, ratings ...RatingsModel) error {
+func (r *projectRepository) InsertRating(ctx context.Context, RatingsModels ...RatingsModel) error {
 	tx, err := r.sqlDatabase.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	for _, rating := range ratings {
+	for _, ratingModel := range RatingsModels {
 		if _, err := tx.ExecContext(
 			ctx,
-			insertTableRatingsQuery,
-			rating.Image,
-			rating.Elo,
+			insertRatingQuery,
+			ratingModel.Image,
+			ratingModel.Elo,
 		); err != nil {
 			return err
 		}
 	}
 
 	return tx.Commit()
-}
-
-func InitTableVotes(db *sql.DB) error {
-	_, err := db.Exec(createTableVotesQuery)
-	return err
-}
-
-func InitTableRatings(db *sql.DB) error {
-	_, err := db.Exec(createTableRatingsQuery)
-	return err
 }

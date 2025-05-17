@@ -23,13 +23,13 @@ function initFinishPage() {
 
   rehydrateLeaderboard(votes);
 
-  const btnRestart     = document.getElementById('btnRestart');
-  const btnContinue    = document.getElementById('btnContinue');
-  const btnToggleBoard = document.getElementById('btnViewBoard');
-  const boardContainer = document.getElementById('containerBoard');
+  const btnRestart     = document.getElementById('btn_restart');
+  const btnContinue    = document.getElementById('btn_continue');
+  const btnToggleBoard = document.getElementById('btn_view_board');
+  const boardContainer = document.getElementById('container_board');
 
-  setText('thankyou',  `Thank you, ${username}!`);
-  setText('voteCount', `You made ${votes} choice${votes === 1 ? '' : 's'}.`);
+  setText('thanks',  `Thank you, ${username}!`);
+  setText('vote_count', `You made ${votes} choice${votes === 1 ? '' : 's'}.`);
 
   btnRestart.addEventListener('click', () => {
     clearSession('surveyUser', 'votesUser', 'votesCount', CACHE_LBOARD, CACHE_VOTES);

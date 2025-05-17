@@ -20,6 +20,7 @@ func NewRouter(pc *ProjectController, cfg MiddlewareConfig) http.Handler {
 
 func registerAPIRoutes(mux *http.ServeMux, pc *ProjectController) {
 	mux.HandleFunc("/users", EnforceMethod(http.MethodGet, pc.HandleUsers))
+	mux.HandleFunc("/surveys", EnforceMethod(http.MethodPost, pc.HandleSurvey))
 	mux.HandleFunc("/votes", EnforceMethod(http.MethodPost, pc.HandleVotes))
 	mux.HandleFunc("/ratings", EnforceMethod(http.MethodGet, pc.HandleRatings))
 }

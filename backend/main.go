@@ -23,26 +23,29 @@ func main() {
 	}
 	defer sqlDB.Close()
 
-	if err := app.InitTableVotes(sqlDB); err != nil {
-		log.Fatalf("Error initializing votes table: %v", err)
+	var initQueries = []string{
+		app.CreateTableSurveysQuery,
+		app.CreateTableVotesQuery,
+		app.CreateTableRatingsQuery,
 	}
-	if err := app.InitTableRatings(sqlDB); err != nil {
-		log.Fatalf("Error initializing ratings table: %v", err)
+	for _, q := range initQueries {
+		if _, err := sqlDB.Exec(q); err != nil {
+			log.Fatalf("failed to init table: %v", err)
+		}
 	}
-
-	repository := app.NewProjectRepository(sqlDB)
-	service := app.NewProjectService(repository)
-	controller := app.NewProjectController(service)
 
 	middlewareCfg := app.MiddlewareConfig{
 		EnableLogging:      true,
 		DisableStaticCache: true,
 	}
 
+	repository := app.NewProjectRepository(sqlDB)
+	service := app.NewProjectService(repository)
+	controller := app.NewProjectController(service)
 	router := app.NewRouter(controller, middlewareCfg)
 
 	server := &http.Server{
-		Addr:    ":" + envCfg.ServerPort,
+		Addr:    "127.0.0.1:" + envCfg.ServerPort,
 		Handler: router,
 	}
 	utils.StartServerWithGracefulShutdown(server, 5*time.Second)

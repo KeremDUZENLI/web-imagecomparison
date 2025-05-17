@@ -9,6 +9,7 @@ import (
 type ProjectService interface {
 	GetAllUsernames(ctx context.Context) ([]string, error)
 	GetAllRatings(ctx context.Context) ([]RatingsModel, error)
+	PostSurvey(ctx context.Context, surveysModel SurveysModel) error
 	PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error)
 }
 
@@ -21,15 +22,19 @@ func NewProjectService(repo ProjectRepository) ProjectService {
 }
 
 func (ps *projectService) GetAllUsernames(ctx context.Context) ([]string, error) {
-	return ps.repository.GetAllUsernames(ctx)
+	return ps.repository.GetUsernames(ctx)
 }
 
 func (ps *projectService) GetAllRatings(ctx context.Context) ([]RatingsModel, error) {
-	return ps.repository.GetAllTableRatings(ctx)
+	return ps.repository.GetRatings(ctx)
+}
+
+func (ps *projectService) PostSurvey(ctx context.Context, surveysModel SurveysModel) error {
+	return ps.repository.InsertSurvey(ctx, surveysModel)
 }
 
 func (ps *projectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesModel, error) {
-	ratings, err := ps.repository.GetAllTableRatings(ctx)
+	ratings, err := ps.repository.GetRatings(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -61,11 +66,11 @@ func (ps *projectService) PostVote(ctx context.Context, dto *VotesDTO) (*VotesMo
 		EloLoserNew:       prevL - delta,
 	}
 
-	if err := ps.repository.InsertTableVotes(ctx, vote); err != nil {
+	if err := ps.repository.InsertVote(ctx, vote); err != nil {
 		return nil, err
 	}
 
-	if err := ps.repository.InsertTableRatings(
+	if err := ps.repository.InsertRating(
 		ctx,
 		RatingsModel{Image: vote.ImageWinner, Elo: vote.EloWinnerNew},
 		RatingsModel{Image: vote.ImageLoser, Elo: vote.EloLoserNew},
