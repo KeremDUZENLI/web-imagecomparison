@@ -9,71 +9,73 @@
 <body>
   <h1>Welcome to the VR Comparison Survey</h1>
 
-  <form id="intro_form">
-    <fieldset>
-      <legend>Background Information</legend>
+  <div class="centered">
+    <form id="intro_form">
+      <fieldset>
+        <legend>Background Information</legend>
 
-      <div class="form-group">
-        <label for="username">Name:</label>
-        <input type="text" id="username" name="username" pattern="[a-z]+" title="Only lowercase letters" required>
-      </div>
+        <div class="form-group">
+          <label for="username">Name:</label>
+          <input type="text" id="username" name="username" pattern="[a-z]+" title="Only lowercase letters" required>
+        </div>
 
-      <div class="form-group">
-        <label for="age">Age range:</label>
-        <select id="age" name="age" required>
-          <option value="" disabled selected>Select your age</option>
-          <option value="0-18">0 - 18</option>
-          <option value="18-24">18 - 24</option>
-          <option value="25-34">25 - 34</option>
-          <option value="35-44">35 - 44</option>
-          <option value="45-54">45 - 54</option>
-          <option value="55+">55+</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="age">Age range:</label>
+          <select id="age" name="age" required>
+            <option value="" disabled selected>Select your age</option>
+            <option value="0-18">0 - 18</option>
+            <option value="18-24">18 - 24</option>
+            <option value="25-34">25 - 34</option>
+            <option value="35-44">35 - 44</option>
+            <option value="45-54">45 - 54</option>
+            <option value="55+">55+</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="gender">Gender:</label>
-        <select id="gender" name="gender" required>
-          <option value="" disabled selected>Select your gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="nonbinary">Nonbinary/Other</option>
-          <option value="nonprefer">Prefer not to say</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="gender">Gender:</label>
+          <select id="gender" name="gender" required>
+            <option value="" disabled selected>Select your gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="nonbinary">Nonbinary/Other</option>
+            <option value="nonprefer">Prefer not to say</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="vr_experience">VR Experience:</label>
-        <select id="vr_experience" name="vr_experience" required>
-          <option value="" disabled selected>How often do you use VR headsets?</option>
-          <option value="never">Never</option>
-          <option value="rarely">Rarely</option>
-          <option value="occasionally">Occasionally</option>
-          <option value="often">Often</option>
-          <option value="daily">Daily</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="vr_experience">VR Experience:</label>
+          <select id="vr_experience" name="vr_experience" required>
+            <option value="" disabled selected>How often do you use VR headsets?</option>
+            <option value="never">Never</option>
+            <option value="rarely">Rarely</option>
+            <option value="occasionally">Occasionally</option>
+            <option value="often">Often</option>
+            <option value="daily">Daily</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="domain_expertise">Domain Expertise:</label>
-        <select id="domain_expertise" name="domain_expertise" required>
-          <option value="" disabled selected>Select your field</option>
-          <option value="architecture">Architecture / Urban Planning</option>
-          <option value="design">Design / Graphics</option>
-          <option value="development">Computer / VR Development</option>
-          <option value="archaeology">Archaeology / Heritage Studies</option>
-          <option value="education">Education / Teaching</option>
-          <option value="engineering">Construction / Engineering</option>
-          <option value="history">History / Cultural Heritage</option>
-          <option value="arts">Humanities / Arts</option>
-          <option value="research">Academic / Research</option>
-          <option value="other">Others</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="domain_expertise">Domain Expertise:</label>
+          <select id="domain_expertise" name="domain_expertise" required>
+            <option value="" disabled selected>Select your field</option>
+            <option value="architecture">Architecture / Urban Planning</option>
+            <option value="design">Design / Graphics</option>
+            <option value="development">Computer / VR Development</option>
+            <option value="archaeology">Archaeology / Heritage Studies</option>
+            <option value="education">Education / Teaching</option>
+            <option value="engineering">Construction / Engineering</option>
+            <option value="history">History / Cultural Heritage</option>
+            <option value="arts">Humanities / Arts</option>
+            <option value="research">Academic / Research</option>
+            <option value="other">Others</option>
+          </select>
+        </div>
 
-      <button type="submit">Start the Survey</button>
-    </fieldset>
-  </form>
+        <button type="submit">Start the Survey</button>
+      </fieldset>
+    </form>
+  </div>
 
   <script type="module" src="js/index.js"></script>
 

@@ -29,7 +29,7 @@ function initFinishPage() {
   const boardContainer = document.getElementById('container_board');
 
   setText('thanks',  `Thank you, ${username}!`);
-  setText('vote_count', `You made ${votes} choice${votes === 1 ? '' : 's'}.`);
+  setText('vote_count', `You made ${votes} choice${votes === 1 ? '' : 's'}`);
 
   btnRestart.addEventListener('click', () => {
     clearSession('surveyUser', 'votesUser', 'votesCount', CACHE_LBOARD, CACHE_VOTES);

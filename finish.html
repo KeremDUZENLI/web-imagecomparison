@@ -10,14 +10,17 @@
 </head>
 
 <body>
-  <h1 id="thanks">Thank you!</h1>
-  <p id="vote_count">You made X choices.</p>
+  <div class="centered">
+    <h1 id="thanks">Thank you!</h1>
+    <p id="vote_count">You made X choices</p>
+    <div class="button-center">
+      <button id="btn_restart">Start Again</button>
+      <button id="btn_continue">Keep Voting</button>
+      <button id="btn_view_board">View Leaderboard</button>
+    </div>
 
-  <button id="btn_restart">Start Again</button>
-  <button id="btn_continue">Keep Voting</button>
-  <button id="btn_view_board">View Leaderboard</button>
-
-  <div id="container_board"></div>
+    <div id="container_board"></div>
+  </div>
 
   <script type="module" src="js/finish.js"></script>
 

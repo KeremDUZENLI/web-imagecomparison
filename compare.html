@@ -12,21 +12,27 @@
 <body>
   <h1>Which scene looks more realistic?</h1>
 
-  <div id="image_container">
+  <div class="pair">
     <figure>
-      <img id="img_a" alt="Option A" loading="lazy">
-      <figcaption>Option A</figcaption>
+      <div class="image-frame">
+        <img id="img_a" alt="Option A" loading="lazy">
+      </div>
       <button id="btn_a">Choose A</button>
     </figure>
+
     <figure>
-      <img id="img_b" alt="Option B" loading="lazy">
-      <figcaption>Option B</figcaption>
+      <div class="image-frame">
+        <img id="img_b" alt="Option B" loading="lazy">
+      </div>
       <button id="btn_b">Choose B</button>
     </figure>
   </div>
 
-  <button id="btn_finish">Finish</button>
   <div id="progress" aria-live="polite"></div>
+
+  <div class="button-center">
+    <button id="btn_finish">Finish</button>
+  </div>
 
   <script type="module" src="js/compare.js"></script>
 

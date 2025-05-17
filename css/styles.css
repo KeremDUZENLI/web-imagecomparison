@@ -1,0 +1,221 @@
+:root {
+  --font-base: 1rem;
+  --font-scale: 1.618;
+  --line-ratio: 1.618;
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-5: 40px;
+
+  --color-bg: #ffffff;
+  --color-text: #333333;
+  --color-accent: #0070f3;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
+html {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: var(--font-base);
+  line-height: calc(var(--line-ratio) * 1em);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+body {
+  margin: 0;
+  padding: 0 2rem;
+}
+footer {
+  text-align: center;
+  margin: var(--space-5) 0;
+  font-size: calc(var(--font-base));
+  color: #666;
+}
+
+
+h1 {
+  font-size: clamp(1.35rem, 4.5vw, 2.25rem);
+  margin-block: clamp(1rem, 3vw, 1.5rem) clamp(0.5rem, 2vw, 1rem);
+  text-align: center;
+}
+h2 {
+  font-size: clamp(1.2rem, 4vw, 1.5rem);
+  margin-block: clamp(0.75rem, 2.5vw, 1rem) clamp(0.5rem, 2vw, 0.75rem);
+}
+p, li, label, #vote_count, #progress {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  line-height: 1.6;
+  margin-block-end: clamp(0.5rem, 2vw, 1rem);
+}
+
+
+a, button {
+  color: var(--color-accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+button {
+  background: none;
+  border: 2px solid var(--color-accent);
+  border-radius: 4px;
+  padding: var(--space-1) var(--space-2);
+  font: inherit;
+  transition: opacity 0.2s;
+}
+button:hover, button:focus {
+  opacity: 0.8;
+  outline: none;
+}
+.button-center button, #btn_finish, #btn_restart, #btn_continue, #btn_view_board {
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  padding: clamp(0.5rem, 1.5vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+  min-width: auto;
+  width: auto;
+  flex: 1;
+  max-width: 15rem;
+}
+.button-center {
+  display: flex;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+
+.container {
+  width: 100%;
+  padding-inline: 1rem;
+  margin-inline: auto;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+#container_board {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2rem);
+}
+
+
+.centered {
+  max-width: 600px;
+  margin: var(--space-5) auto;
+  padding: 0 1.5rem;
+}
+
+
+.form-group {
+  margin-bottom: var(--space-3);
+}
+.form-group label {
+  display: block;
+  margin-bottom: var(--space-1);
+}
+.form-group input, .form-group select {
+  width: 100%;
+  padding: var(--space-1);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font: inherit;
+}
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+
+.leaderboard-item-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-bottom: 1px solid #eee;
+  font-size: var(--font-base);
+  flex-wrap: wrap;
+}
+.leaderboard-item-inline img {
+  flex: none;
+  width: clamp(10rem, 50vw, 20rem);
+  height: auto;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: clamp(0.5rem, 2vw, 1rem);
+}
+.leaderboard-item-inline > div:first-child {
+  flex: none;
+  font-weight: 600;
+  width: 2em;
+  text-align: right;
+}
+.leaderboard-item-inline > div:nth-child(3), .leaderboard-item-inline > div:last-child {
+  flex: 1 1 100%;
+  margin-left: 0;
+}
+
+
+.image-frame {
+  width: 100%;
+  aspect-ratio: 4 / 3; 
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  display: block;
+}
+
+
+.pair {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+.pair figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pair button, #btn_finish {
+  margin-top: var(--space-1);
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--space-1) var(--space-2);
+}
+
+
+#progress, #vote_count {
+  text-align: center; 
+  margin: var(--space-3) 0;
+  font-size: calc(var(--font-base) * 1.1);
+  font-variant: small-caps;
+}
+
+
+@media (min-width: 48em) {
+  .container {
+    grid-template-columns: 1fr 1.618fr;
+  }
+  .pair {
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+  .leaderboard-item-inline {
+    flex-wrap: nowrap;
+  }
+  .leaderboard-item-inline > div:nth-child(3), .leaderboard-item-inline > div:last-child {
+    flex: none;
+    margin-left: var(--space-3);
+  }
+}
+@media (min-width: 64em) {
+  .container {
+    max-width: 75rem;
+    margin-inline: auto;
+  }
+}

@@ -7,7 +7,7 @@ export function showLeaderboard(container, items) {
       <div>#${i + 1}</div>
       <img src="images/${item.image}" alt="${item.image}">
       <div>${item.image}</div>
-      <div>${item.elo} Elo</div>
+      <div>${item.elo} ELO</div>
     `;
     container.appendChild(div);
   });
