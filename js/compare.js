@@ -1,5 +1,6 @@
-import { MatchSession }   from './core/matchSession.js';
 import { MIN_VOTES }      from './env/constants.js';
+
+import { MatchSession }   from './core/matchSession.js';
 import { postVote }       from './infrastructure/postVote.js';
 import { initCompareDOM } from './ui/initCompareDOM.js';
 import { loadImages }     from './ui/loadImages.js';
@@ -11,6 +12,27 @@ const goTo = url => location.href = url;
 const getSession = key => sessionStorage.getItem(key);
 const setSession = (key, value) => sessionStorage.setItem(key, value);
 
+const getJSON = key => {
+  try { return JSON.parse(sessionStorage.getItem(key)); }
+  catch { return null; }
+};
+const setJSON = (key, value) => sessionStorage.setItem(key, JSON.stringify(value));
+
+const persistPair = pair => {
+  setJSON('currentPair', pair);
+  setJSON('lastPair',    pair);
+};
+
+const restorePair = () => {
+  const pair = getJSON('currentPair');
+  if (!pair) return null;
+
+  session.currentPair = pair;
+  session.lastPair    = getJSON('lastPair') || pair;
+  showPair(dom, pair, session.matchesDone, MIN_VOTES);
+  return true;
+};
+
 async function initCompare() {
   dom = initCompareDOM();
 
@@ -18,8 +40,12 @@ async function initCompare() {
   dom.btnB.onclick      = () => handleChoice(1);
   dom.btnFinish.onclick = finishSession;
 
+  attachWindowEvents();
+}
+
+function attachWindowEvents() {
   window.addEventListener('beforeunload', unloadHandler);
-  window.addEventListener('pageshow', pageshowHandler);
+  window.addEventListener('pageshow',     pageshowHandler);
 }
 
 async function renderCompare() {
@@ -32,17 +58,20 @@ async function renderCompare() {
   }
 
   session.matchesDone = initVoteState();
-  const stored = sessionStorage.getItem('currentPair');
-  if (stored) {
-    const pair = JSON.parse(stored);
-    showPair(dom, pair, session.matchesDone, MIN_VOTES);
-    session.currentPair = pair;
-    const lastStored = sessionStorage.getItem('lastPair');
-    session.lastPair  = lastStored ? JSON.parse(lastStored) : pair;
-    return;
-  }
+
+  if (restorePair()) return;
 
   loadNextPair();
+}
+
+function initVoteState() {
+  const lastUser = getSession('votesUser');
+  if (lastUser !== currentUser) {
+    setSession('votesCount', '0');
+    setSession('votesUser',  currentUser);
+  }
+  const count = Number(getSession('votesCount'));
+  return Number.isNaN(count) ? 0 : count;
 }
 
 async function handleChoice(idx) {
@@ -50,7 +79,7 @@ async function handleChoice(idx) {
     session.currentPair[idx],
     session.currentPair[1 - idx],
   ];
-  
+
   await postVote({ username: currentUser, imageWinner: winner, imageLoser: loser });
 
   session.applyVote();
@@ -76,34 +105,24 @@ function unloadHandler(e) {
 }
 
 function pageshowHandler(event) {
-  if (event.persisted || performance.getEntriesByType('navigation')[0]?.type === 'back_forward') {
+  const navType = performance.getEntriesByType('navigation')[0]?.type;
+  if (event.persisted || navType === 'back_forward') {
     renderCompare();
   }
 }
 
-function initVoteState() {
-  const lastUser = getSession('votesUser');
-  if (lastUser !== currentUser) {
-    setSession('votesCount', '0');
-    setSession('votesUser', currentUser);
-  }
-  const count = Number(getSession('votesCount'));
-  return isNaN(count) ? 0 : count;
-}
-
 function loadNextPair() {
-  const done = session.matchesDone;
+  const done      = session.matchesDone;
   const canFinish = session.canFinish();
 
   dom.btnFinish.style.display = canFinish ? 'inline-block' : 'none';
-  dom.progress.textContent = canFinish
+  dom.progress.textContent    = canFinish
     ? `You've reached ${MIN_VOTES} votes — you may Finish or keep voting.`
     : `Match ${done + 1} of ${MIN_VOTES}`;
 
   const pair = session.nextPair();
   session.lastPair = pair;
-  sessionStorage.setItem('currentPair', JSON.stringify(pair));
-  sessionStorage.setItem('lastPair',    JSON.stringify(pair));
+  persistPair(pair);
   showPair(dom, pair, done, MIN_VOTES);
 }
 

@@ -1,4 +1,5 @@
 import { MIN_VOTES, TOPN } from './env/constants.js';
+
 import { getRatings }      from './infrastructure/getRatings.js';
 import { setText }         from './ui/setText.js';
 import { showLeaderboard } from './ui/showLeaderboard.js';
