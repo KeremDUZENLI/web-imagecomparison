@@ -1,20 +1,24 @@
 import { getUsernames } from './infrastructure/getUsernames.js';
 
+const goTo = url => location.href = url;
+const formatName = inputEl => inputEl.value.trim().toLowerCase();
+
 export async function initIntroForm() {
-  const form = document.getElementById('introForm');
+  const form  = document.getElementById('introForm');
   const input = document.getElementById('username');
 
-  form.onsubmit = async e => {
-    e.preventDefault();
+  form.onsubmit = async event => {
+    event.preventDefault();
 
-    const name = input.value.trim().toLowerCase();
+    const name = formatName(input);
     const existingNames = await getUsernames();
     if (existingNames.includes(name)) {
-      return alert('This name has been taken');
+      alert('This name has been taken');
+      return;
     }
 
     sessionStorage.setItem('surveyUser', name);
-    location.href = 'compare.html';
+    goTo('compare.html');
   };
 }
 
