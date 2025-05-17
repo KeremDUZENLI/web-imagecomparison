@@ -1,3 +1,8 @@
+# gitignore helpers
+## git rm -r --cached .
+## git update-index --assume-unchanged /images
+
+
 # Environment and configuration files
 *.env
 *.spec
