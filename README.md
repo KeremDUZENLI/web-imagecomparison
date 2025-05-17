@@ -29,3 +29,11 @@ https://keremduzenli.github.io/web-imagecomparison/
     /utils/shutdown   -> Shutdows Router Gracefully
     /main.go          -> App setup and router
 ```
+
+# FRONTEND SUMMARY
+
+## Generate images.json
+```
+npm install
+npm run generate-images
+```

@@ -1,0 +1,9 @@
+{
+  "name": "web-imagecomparison",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "generate-images": "node scripts/createImageJSON.js"
+  },
+  "license": "MIT"
+}
