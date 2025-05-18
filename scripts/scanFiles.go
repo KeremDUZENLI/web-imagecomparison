@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var suffixes = []string{"html", "js", "go"}
+var suffixes = []string{"html", "js", "go", "yml"}
 var ignore = []string{"images", "scripts"}
 
 func main() {
