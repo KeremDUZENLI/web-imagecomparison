@@ -13,6 +13,8 @@ type Config struct {
 	DBPassword string
 	DBName     string
 	DBPort     string
+	SSLMode    string
+
 	ServerPort string
 }
 
@@ -25,6 +27,8 @@ func LoadConfig() (*Config, error) {
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		DBName:     os.Getenv("DB_NAME"),
 		DBPort:     os.Getenv("DB_PORT"),
+		SSLMode:    os.Getenv("DB_SSLMODE"),
+
 		ServerPort: os.Getenv("SERVER_PORT"),
 	}
 
