@@ -4,7 +4,7 @@ const path = require('path');
 async function main() {
   const projectRoot = path.resolve(__dirname, '..');
   const imagesDir   = path.join(projectRoot, 'images');
-  const outputFile  = path.join(imagesDir, 'images.json');
+  const outputFile  = path.join(imagesDir, '_images.json');
 
   const files = await fs.readdir(imagesDir);
   const imageFiles = files

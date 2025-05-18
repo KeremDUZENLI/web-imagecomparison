@@ -28,7 +28,7 @@ async function initIntroForm() {
     try {
       existingNames = await getUsernames();
     } catch (error) {
-      alert('Could not load existing usernames');
+      alert('Could not connect to the server');
       return;
     }
 
