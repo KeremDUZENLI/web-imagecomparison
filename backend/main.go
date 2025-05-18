@@ -45,7 +45,7 @@ func main() {
 	router := app.NewRouter(controller, middlewareCfg)
 
 	server := &http.Server{
-		Addr:    "127.0.0.1:" + envCfg.ServerPort,
+		Addr:    ":" + envCfg.ServerPort,
 		Handler: router,
 	}
 	utils.StartServerWithGracefulShutdown(server, 5*time.Second)
