@@ -106,6 +106,10 @@ button:hover, button:focus {
   margin: var(--space-5) auto;
   padding: 0 1.5rem;
 }
+.centered form > button[type="submit"] {
+  display: block;
+  margin: var(--space-3) auto;
+}
 
 
 .form-group {
