@@ -82,73 +82,73 @@ npm run createImageJSON
 
 ```
 web-imagecomparison/
-├── backend/                        # Go API and database setup
+├── backend/
 
-│   ├── app/                        # Core application layers
-│   │   ├── controller.go           # HTTP handlers for surveys, votes, users, ratings
-│   │   ├── middleware.go           # Request logging and static cache control
-│   │   ├── model.go                # Data models (SurveysModel, VotesModel, RatingsModel)
-│   │   ├── repository.go           # Database queries and upserts
-│   │   ├── router.go               # Route registration and HTTP server mux
-│   │   └── service.go              # Business logic (ELO calculation, workflows)
+│   ├── app/                        
+│   │   ├── controller.go
+│   │   ├── middleware.go
+│   │   ├── model.go     
+│   │   ├── repository.go
+│   │   ├── router.go 
+│   │   └── service.go 
 │   │
-│   ├── database/                   # DB connection
-│   │   └── connect.go              # Postgres connection helper (sslmode, ping)
+│   ├── database/        
+│   │   └── connect.go   
 │   │
-│   ├── env/                        # Environment config
-│   │   ├── constants.go            # DEFAULT_RATING, K_FACTOR
-│   │   └── env.go                  # Load and validate .env variables
+│   ├── env/             
+│   │   ├── constants.go 
+│   │   └── env.go       
 │   │
-│   ├── utils/                      # Auxiliary tools
-│   │   └── shutdown.go             # Graceful shutdown on SIGINT/SIGTERM
+│   ├── utils/           
+│   │   └── shutdown.go  
 │   │
-│   ├── .env                        # Local environment variables (DB, SSL, SERVER_PORT)
-│   ├── .env.example                # Template for env settings
-│   ├── docker-compose.yml          # Local Postgres container definition
-│   ├── go.mod                      # Go module definition
-│   ├── go.sum                      # Module checksums
-│   └── main.go                     # Entry point: load config, init DB, start server
+│   ├── .env             
+│   ├── .env.example     
+│   ├── docker-compose.yml
+│   ├── go.mod            
+│   ├── go.sum            
+│   └── main.go           
 │
-├── css/                            # Global stylesheet (styles.css)
+├── css/                  
 │   └── styles.css
 │
-├── images/                         # VR scene image assets
+├── images/               
 │   └── ... (e.g. 1.jpg, 2.jpg, etc.)
 │
-├── js/                             # Frontend logic and UI modules
-│   ├── core/                       # Session logic
-│   │   └── matchSession.js         # Random non‑repeating pair generation
+├── js/                   
+│   ├── core/             
+│   │   └── matchSession.js
 │   │
-│   ├── env/                        # Frontend constants
-│   │   └── constants.js            # MIN_VOTES, TOPN
+│   ├── env/               
+│   │   └── constants.js   
 │   │
-│   ├── infrastructure/             # API fetch wrappers
+│   ├── infrastructure/    
 │   │   ├── getRatings.js
 │   │   ├── getUsernames.js
 │   │   ├── postSurvey.js
 │   │   └── postVote.js
 │   │
-│   ├── ui/                         # DOM update helpers
-│   │   ├── loadImages.js           # Load images/_images.json
-│   │   ├── setText.js              # Set textContent by ID
-│   │   ├── showLeaderboard.js      # Render top‑N leaderboard
-│   │   └── showPair.js             # Display A/B image pair and progress
+│   ├── ui/                
+│   │   ├── loadImages.js  
+│   │   ├── setText.js     
+│   │   ├── showLeaderboard.js
+│   │   └── showPair.js       
 │   │
-│   ├── utils/                      # Utility helpers
-│   │   └── waitForEnterKey.js      # Promise for Enter key event
+│   ├── utils/                
+│   │   └── waitForEnterKey.js
 │   │
-│   ├── compare.js                  # Orchestrates compare page logic
-│   ├── finish.js                   # Handles finish page and cached leaderboard
-│   └── index.js                    # Handles survey intro form submission
+│   ├── compare.js            
+│   ├── finish.js             
+│   └── index.js              
 │
-├── scripts/                        # (Optional) build/generation scripts
-│   └── generate-images.js          # Script to create images/_images.json
+├── scripts/                  
+│   └── generate-images.js    
 │
-├── compare.html                    # Voting page template
-├── finish.html                     # Thank‑you & leaderboard page template
-├── index.html                      # Survey intro page template
-├── LICENSE                         # BSD 3‑Clause License
-└── README.md                       # This documentation
+├── compare.html              
+├── finish.html              
+├── index.html               
+├── LICENSE                  
+└── README.md                
 ```
 
 

@@ -11,8 +11,8 @@ const (
 			username         TEXT 		  PRIMARY KEY,
 			age              TEXT	 	  NOT NULL,
 			gender           TEXT 		  NOT NULL,
-			vr_experience    TEXT 		  NOT NULL,
-			domain_expertise TEXT 		  NOT NULL,
+			experience    	 TEXT 		  NOT NULL,
+			profession 		 TEXT 		  NOT NULL,
 			created_at    	 TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 		);`
 
@@ -47,8 +47,8 @@ const (
 			username, 
 			age, 
 			gender, 
-			vr_experience, 
-			domain_expertise
+			experience, 
+			profession
 		)
 		VALUES($1,$2,$3,$4,$5)
 		ON CONFLICT (username) DO NOTHING;`
@@ -133,8 +133,8 @@ func (r *projectRepository) InsertSurvey(ctx context.Context, surveysModel Surve
 		surveysModel.Username,
 		surveysModel.Age,
 		surveysModel.Gender,
-		surveysModel.VRExperience,
-		surveysModel.DomainExpertise,
+		surveysModel.Experience,
+		surveysModel.Profession,
 	)
 	return err
 }

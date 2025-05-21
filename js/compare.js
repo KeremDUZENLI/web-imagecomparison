@@ -54,7 +54,7 @@ async function handleChoice(idx) {
     await postVote({
       username: currentUser, 
       image_winner: winner, 
-      image_loser: loser 
+      image_loser: loser,
     });
   } catch {
     alert('Could not save vote');
