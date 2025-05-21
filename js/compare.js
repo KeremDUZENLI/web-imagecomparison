@@ -22,8 +22,10 @@ const restorePair = () => {
   const pair = getJSON('currentPair');
   if (!pair) return null;
 
-  session.currentPair = pair;
-  session.lastPair    = getJSON('lastPair') || pair;
+  session.currentPair                = pair;
+  session.lastPair                   = getJSON('lastPair') || pair;
+  copmareDOM.btnFinish.style.display = session.canFinish() ? 'inline-block' : 'none';
+
   showPair(copmareDOM, pair, session.matchesDone, MIN_VOTES);
   return true;
 };
@@ -100,9 +102,9 @@ async function renderCompare() {
 
   session.matchesDone = initVoteState();
 
-  if (restorePair()) return;
-
-  loadNextPair();
+  if (!restorePair()) {
+    loadNextPair();
+  }
 }
 
 function initVoteState() {

@@ -12,7 +12,7 @@ import (
 
 func StartServerWithGracefulShutdown(server *http.Server, shutdownTimeout time.Duration) {
 	go func() {
-		log.Printf("\t\u2705 Server is running: %s", server.Addr)
+		log.Printf("\t\u2705 Server is running on %s", server.Addr)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("\t\u274c Server error: %v", err)
 		}
