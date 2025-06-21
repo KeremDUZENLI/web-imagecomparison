@@ -1,10 +1,3 @@
-#1 git add .gitignore
-#2 git commit -m "Update .gitignore to ignore helpers/"
-#3 git rm -r --cached .
-#4 git add .
-#5 git commit -m "Apply .gitignore rules: untrack ignored files"
-#Optional# git update-index --assume-unchanged /images
-
 # Environment and configuration files
 *.env
 *.spec
