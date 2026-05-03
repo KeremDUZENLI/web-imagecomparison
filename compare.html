@@ -1,43 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VR Comparison Survey</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%2210 0 100 100%22><text y=%22.90em%22 font-size=%2290%22>🥽</text></svg>"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VR Comparison Survey</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%2210 0 100 100%22><text y=%22.90em%22 font-size=%2290%22>🥽</text></svg>">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
+  <body>
+    <h1>Which one feels more immersive?</h1>
+    <h5>Please ignore image blurriness!</h5>
 
-<body>
-  <h1>Which scene looks more realistic?</h1>
+    <div class="pair">
+      <figure>
+        <div class="image-frame">
+          <img id="img_a" alt="Option A" loading="lazy" />
+        </div>
+        <button id="btn_a">Choose A</button>
+      </figure>
 
-  <div class="pair">
-    <figure>
-      <div class="image-frame">
-        <img id="img_a" alt="Option A" loading="lazy">
-      </div>
-      <button id="btn_a">Choose A</button>
-    </figure>
+      <figure>
+        <div class="image-frame">
+          <img id="img_b" alt="Option B" loading="lazy" />
+        </div>
+        <button id="btn_b">Choose B</button>
+      </figure>
+    </div>
 
-    <figure>
-      <div class="image-frame">
-        <img id="img_b" alt="Option B" loading="lazy">
-      </div>
-      <button id="btn_b">Choose B</button>
-    </figure>
-  </div>
+    <div id="progress" aria-live="polite"></div>
 
-  <div id="progress" aria-live="polite"></div>
+    <div class="button-center">
+      <button id="btn_finish">Finish</button>
+    </div>
 
-  <div class="button-center">
-    <button id="btn_finish">Finish</button>
-  </div>
+    <script type="module" src="js/compare.js"></script>
 
-  <script type="module" src="js/compare.js"></script>
-
-  <footer><small>&copy; Developed by Kerem Duzenli</small></footer>
-  
-</body>
-
+    <footer><small>&copy; Developed by Kerem Düzenli</small></footer>
+  </body>
 </html>

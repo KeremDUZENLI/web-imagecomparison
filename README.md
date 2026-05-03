@@ -4,27 +4,24 @@
 
 **Live Website:** [https://tinyurl.com/vr-compare](https://web-imagecomparison-api.onrender.com/)
 
-
 ## OVERVIEW
 
 A VR scene realism comparison tool that collects user preferences via an ELO-based ranking system.
 
-| Feature                 | Description                                               |
-|-------------------------|-----------------------------------------------------------|
+| Feature                 | Description                                                             |
+| ----------------------- | ----------------------------------------------------------------------- |
 | **User Survey**         | Collect demographic info (age, gender, VR experience, domain expertise) |
-| **Pairwise Comparison** | Display random non-repeating image pairs                 |
-| **ELO Ranking**         | Automatically adjust image scores                        |
-| **Leaderboard**         | View top-ranked images after voting                       |
-| **Session Persistence** | Handles page reloads and unfinished votes with sessionStorage |
-
+| **Pairwise Comparison** | Display random non-repeating image pairs                                |
+| **ELO Ranking**         | Automatically adjust image scores                                       |
+| **Leaderboard**         | View top-ranked images after voting                                     |
+| **Session Persistence** | Handles page reloads and unfinished votes with sessionStorage           |
 
 ## GETTING STARTED
 
 ### Prerequisites
 
-* [Go](https://golang.org/doc/install) (v1.18+)
-* [Docker](https://docs.docker.com/compose/install/)
-
+- [Go](https://golang.org/doc/install) (v1.18+)
+- [Docker](https://docs.docker.com/compose/install/)
 
 ### Configuration
 
@@ -40,16 +37,17 @@ DB_SSLMODE  =disable
 SERVER_PORT =5501
 ```
 
-
 ### Installation
 
 1. **Clone the repo**
+
 ```bash
 git clone https://github.com/KeremDUZENLI/web-imagecomparison.git
 cd web-imagecomparison/backend
 ```
 
 2. **Start the database**
+
 ```bash
 docker-compose build --no-cache
 docker-compose up
@@ -57,26 +55,25 @@ docker ps
 ```
 
 3. **Run the backend**
+
 ```bash
 go run main.go
 ```
 
 4. **Open the frontend**
+
 ```bash
 http://localhost:5501
 ```
 
-
 ### Updating Images List
 
-If you add or remove images in `images/`, update `_images.json`:
+If you add or remove images in `images/`, update `images.json`:
 
 ```bash
 cd  scripts/
-npm install
-npm run createImageJSON
+node createImageJSON.js
 ```
-
 
 ## PROJECT STRUCTURE
 
@@ -84,77 +81,77 @@ npm run createImageJSON
 web-imagecomparison/
 ├── backend/
 
-│   ├── app/                        
+│   ├── app/
 │   │   ├── controller.go
 │   │   ├── middleware.go
-│   │   ├── model.go     
+│   │   ├── model.go
 │   │   ├── repository.go
-│   │   ├── router.go 
-│   │   └── service.go 
+│   │   ├── router.go
+│   │   └── service.go
 │   │
-│   ├── database/        
-│   │   └── connect.go   
+│   ├── database/
+│   │   └── connect.go
 │   │
-│   ├── env/             
-│   │   ├── constants.go 
-│   │   └── env.go       
+│   ├── env/
+│   │   ├── constants.go
+│   │   └── env.go
 │   │
-│   ├── utils/           
-│   │   └── shutdown.go  
+│   ├── utils/
+│   │   └── shutdown.go
 │   │
-│   ├── .env             
-│   ├── .env.example     
+│   ├── .env
+│   ├── .env.example
 │   ├── docker-compose.yml
-│   ├── go.mod            
-│   ├── go.sum            
-│   └── main.go           
+│   ├── go.mod
+│   ├── go.sum
+│   └── main.go
 │
-├── css/                  
+├── css/
 │   └── styles.css
 │
-├── images/               
+├── images/
 │   └── ... (e.g. 1.jpg, 2.jpg, etc.)
 │
-├── js/                   
-│   ├── core/             
+├── js/
+│   ├── core/
 │   │   └── matchSession.js
 │   │
-│   ├── env/               
-│   │   └── constants.js   
+│   ├── env/
+│   │   └── constants.js
 │   │
-│   ├── infrastructure/    
+│   ├── infrastructure/
 │   │   ├── getRatings.js
 │   │   ├── getUsernames.js
 │   │   ├── postSurvey.js
 │   │   └── postVote.js
 │   │
-│   ├── ui/                
-│   │   ├── loadImages.js  
-│   │   ├── setText.js     
+│   ├── ui/
+│   │   ├── loadImages.js
+│   │   ├── setText.js
 │   │   ├── showLeaderboard.js
-│   │   └── showPair.js       
+│   │   └── showPair.js
 │   │
-│   ├── utils/                
+│   ├── utils/
 │   │   └── waitForEnterKey.js
 │   │
-│   ├── compare.js            
-│   ├── finish.js             
-│   └── index.js              
+│   ├── compare.js
+│   ├── finish.js
+│   └── index.js
 │
-├── scripts/                  
-│   └── generate-images.js    
+├── scripts/
+│   └── generate-images.js
 │
-├── compare.html              
-├── finish.html              
-├── index.html               
-├── LICENSE                  
-└── README.md                
+├── compare.html
+├── finish.html
+├── index.html
+├── LICENSE
+└── README.md
 ```
-
 
 ## BACKEND (Onion Architecture)
 
 GO:
+
 ```
 app/controller   --> HTTP handlers
 app/middleware   --> Logging & cache control
@@ -168,15 +165,16 @@ utils/shutdown   --> Graceful server shutdown
 main.go          --> Application entry point
 ```
 
-
 ## FRONTEND (Responsive)
 
 CSS:
+
 ```
 css/style          --> Responsive, accessible design
 ```
 
 Vanilla JS:
+
 ```
 /core/matchSession --> Class
 /env/constants     --> Constant values
@@ -186,16 +184,13 @@ Vanilla JS:
 /                  --> Session logics
 ```
 
-
 ## LICENCE
 
 This project is released under the [BSD 3-Clause License](LICENSE).
 
-
 ## DISCLAIMER
 
 This repository is intended **only for educational and research purposes**.
-
 
 ## SUPPORT MY PROJECTS
 

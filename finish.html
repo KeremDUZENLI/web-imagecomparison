@@ -1,31 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VR Comparison Survey</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%2210 0 100 100%22><text y=%22.90em%22 font-size=%2290%22>🥽</text></svg>"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VR Comparison Survey</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%2210 0 100 100%22><text y=%22.90em%22 font-size=%2290%22>🥽</text></svg>">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
+  <body>
+    <div class="centered">
+      <h1 id="thanks">Thank you!</h1>
+      <p id="vote_count">You made X choices</p>
+      <div class="button-center">
+        <button id="btn_restart">Start Again</button>
+        <button id="btn_continue">Keep Voting</button>
+        <button id="btn_view_board">View Leaderboard</button>
+      </div>
 
-<body>
-  <div class="centered">
-    <h1 id="thanks">Thank you!</h1>
-    <p id="vote_count">You made X choices</p>
-    <div class="button-center">
-      <button id="btn_restart">Start Again</button>
-      <button id="btn_continue">Keep Voting</button>
-      <button id="btn_view_board">View Leaderboard</button>
+      <div id="container_board"></div>
     </div>
 
-    <div id="container_board"></div>
-  </div>
+    <script type="module" src="js/finish.js"></script>
 
-  <script type="module" src="js/finish.js"></script>
-
-  <footer><small>&copy; Developed by Kerem Duzenli</small></footer>
-
-</body>
-
+    <footer><small>&copy; Developed by Kerem Düzenli</small></footer>
+  </body>
 </html>
