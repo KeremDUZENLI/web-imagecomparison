@@ -2,8 +2,6 @@
 
 **Static Website:** [https://keremduzenli.github.io/web-imagecomparison](https://keremduzenli.github.io/web-imagecomparison/)
 
-**Live Website:** [https://tinyurl.com/vr-compare](https://web-imagecomparison-api.onrender.com/)
-
 ## OVERVIEW
 
 A VR scene realism comparison tool that collects user preferences via an ELO-based ranking system.
@@ -80,7 +78,6 @@ node createImageJSON.js
 ```
 web-imagecomparison/
 ├── backend/
-
 │   ├── app/
 │   │   ├── controller.go
 │   │   ├── middleware.go
